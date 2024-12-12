@@ -63,9 +63,9 @@ export default function MainAbonnements() {
         setTitleSearch(event.target.value);
 
         if (!event.target.value) {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.Price >= priceRange[0] && abonnement.Price <= priceRange[1]));
+            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.price >= priceRange[0] && abonnement.price <= priceRange[1]));
         } else {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.Title.toLowerCase().includes(event.target.value.toLowerCase())));
+            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.title.toLowerCase().includes(event.target.value.toLowerCase())));
         }
     };
 
@@ -82,7 +82,7 @@ export default function MainAbonnements() {
     const handlePriceRangeChange = (event, newValue) => {
         setPriceRange(newValue);
 
-        setSearchedAbonnements(abonnements.filter(abonnement => abonnement.Price >= priceRange[0] && abonnement.Price <= priceRange[1]));
+        setSearchedAbonnements(abonnements.filter(abonnement => abonnement.price >= priceRange[0] && abonnement.price <= priceRange[1]));
     };
 
 
