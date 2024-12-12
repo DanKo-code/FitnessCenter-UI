@@ -31,7 +31,7 @@ export function AppRouter() {
             ) : (
                 <>
                     <Route
-                        path='/main'
+                        path='/main/home'
                         element={<MainNavHome/>}
                     />
                     <Route
@@ -61,7 +61,7 @@ export function AppRouter() {
                 </>
             )}
 
-            <Route path="*" element={<Navigate to={isUserLogged ? "/main" : "/signin"}/>}></Route>
+            <Route path="*" element={<Navigate to={isUserLogged ? "/main/home" : "/signin"}/>}></Route>
 
         </Routes>
     );

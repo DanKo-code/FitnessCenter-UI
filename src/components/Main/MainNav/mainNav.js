@@ -62,7 +62,7 @@ export default function MainNav() {
                                     paddingLeft: '25%', // Добавляем отступ слева для текста
                                 }}
 
-                                onClick={()=>{ ('/main')}}
+                                onClick={()=>{navigate('/main/home')}}
                                 >
                             Main
                         </Button>
