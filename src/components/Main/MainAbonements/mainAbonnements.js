@@ -33,14 +33,14 @@ export default function MainAbonnements() {
         Resource.get('/abonements')
             .then(response => {
 
-                let abonements = response.data.abonements.AbonementObjects
+                let abonements = response.data.abonements.abonementsWithServices
 
                 setAbonnements(abonements);
                 console.log('abonements: ' + JSON.stringify(abonements, null, 2))
 
                 if (abonements.length > 0) {
 
-                    const sortPrices = abonements.map(abonement => abonement.price).sort((a, b) => a - b);
+                    const sortPrices = abonements.map(abonement => abonement.abonement.price).sort((a, b) => a - b);
 
                     console.log('sortPrices: '+JSON.stringify(sortPrices, null, 2));
 
@@ -63,9 +63,9 @@ export default function MainAbonnements() {
         setTitleSearch(event.target.value);
 
         if (!event.target.value) {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.price >= priceRange[0] && abonnement.price <= priceRange[1]));
+            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.price >= priceRange[0] && abonnement.abonement.price <= priceRange[1]));
         } else {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.title.toLowerCase().includes(event.target.value.toLowerCase())));
+            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.title.toLowerCase().includes(event.target.value.toLowerCase())));
         }
     };
 
@@ -82,7 +82,7 @@ export default function MainAbonnements() {
     const handlePriceRangeChange = (event, newValue) => {
         setPriceRange(newValue);
 
-        setSearchedAbonnements(abonnements.filter(abonnement => abonnement.price >= priceRange[0] && abonnement.price <= priceRange[1]));
+        setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.price >= priceRange[0] && abonnement.abonement.price <= priceRange[1]));
     };
 
 

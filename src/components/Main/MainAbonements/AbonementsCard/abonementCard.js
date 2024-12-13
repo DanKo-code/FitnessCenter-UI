@@ -106,7 +106,7 @@ export default function AbonnementCard(props) {
 
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <div style={{marginTop: '5px', fontSize: '24px'}}>
-                    {abonnement.title}
+                    {abonnement.abonement.title}
                 </div>
             </div>
 
@@ -121,7 +121,7 @@ export default function AbonnementCard(props) {
                         <AccessTimeIcon fontSize="large" style={{marginRight: '10px'}}/>
                         <div style={{fontSize: '14px'}}>Validity Period:</div>
                         <div style={{marginLeft: '5px', marginRight: '5px', fontSize: '14px'}}>
-                            {abonnement.validity}
+                            {abonnement.abonement.validity}
                         </div>
 {/*
                         <div style={{fontSize: '14px'}}>months</div>
@@ -137,7 +137,7 @@ export default function AbonnementCard(props) {
                         <CalendarMonthIcon fontSize="large" style={{marginRight: '10px'}}/>
                         <div style={{fontSize: '14px'}}>Visiting Time:</div>
                         <div style={{fontSize: '14px', marginLeft: '5px', marginRight: '5px'}}>
-                            {abonnement.visiting_time}
+                            {abonnement.abonement.visiting_time}
                         </div>
 
                     </div>
@@ -154,13 +154,13 @@ export default function AbonnementCard(props) {
                             fontSize: '14px',
                             marginLeft: '5px',
                             marginRight: '5px'
-                        }}>{abonnement.price}</div>
+                        }}>{abonnement.abonement.price}</div>
                     </div>
                 </div>
 
                 <div style={{width: '200px', paddingRight: '20px'}}>
                     {/*{abonnement.Photo}*/}
-                    <img style={{width: '100%', height: 'auto'}} src={abonnement.photo}/>
+                    <img style={{width: '100%', height: 'auto'}} src={abonnement.abonement.photo}/>
                 </div>
             </div>
 
@@ -175,14 +175,14 @@ export default function AbonnementCard(props) {
                 justifyContent: 'space-between'
             }}>
                 <div style={{display: 'flex',}}>
-                    {abonnement.AbonementService?.length > 0 &&
-                        abonnement.AbonementService.map(Service => (
+                    {abonnement.services?.length > 0 &&
+                        abonnement.services.map(Service => (
                         <div style={{marginRight: '10px'}}>
                             <div style={{width: '80px', height: '60px'}}>
                                 <img style={{width: '100%', height: 'auto'}}
                                      src={sad_doing_abonnements_card}/>
                             </div>
-                            <div>{Service.Service.title}</div>
+                            <div>{Service.title}</div>
                         </div>
                     ))}
                 </div>
