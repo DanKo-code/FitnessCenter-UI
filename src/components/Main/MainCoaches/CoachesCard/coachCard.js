@@ -39,12 +39,12 @@ export default function CoachCard(props) {
                 <div style={{display: 'flex', justifyContent: 'center', paddingBottom: '20px'}}>
                     <div style={{width: imageSize ? imageSize : '320px', paddingRight: '20px'}}>
                         {/*{abonnement.Photo}*/}
-                        <img style={{width: '100%', height: 'auto'}} src={sad_doing_abonnements_card}/>
+                        <img style={{width: '100%', height: 'auto'}} src={coach.coach.photo}/>
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
                         <div style={{marginTop: '5px', fontSize: '24px'}}>
-                            {coach.Name}
+                            {coach.coach.name}
                         </div>
 
                         {
@@ -67,15 +67,16 @@ export default function CoachCard(props) {
 
                 </div>
 
+
                 <div style={{paddingBottom: '15px', fontSize: '18px'}}>Services:</div>
                 <div style={{display: 'flex',}}>
-                    {coach.CoachService.map(Service => (
+                    {coach.services.map(Service => (
                         <div style={{marginRight: '10px'}}>
                             <div style={{width: '80px', height: '60px'}}>
                                 <img style={{width: '100%', height: 'auto'}}
-                                     src={sad_doing_abonnements_card}/>
+                                     src={Service.photo}/>
                             </div>
-                            <div>{Service.Service.Title}</div>
+                            <div>{Service.title}</div>
                         </div>
                     ))}
                 </div>
