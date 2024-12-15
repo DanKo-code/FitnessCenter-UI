@@ -26,10 +26,12 @@ export default function CoachDetailsCard(props) {
     const [reviewText, setReviewText] = useState("");
     const [coachComments, setCoachComments] = useState([]);
 
+    let currentUser = useSelector((state) => state.userSliceMode.user);
+
     useEffect(() => {
 
-        if(coach.Comment){
-            setCoachComments(coach.Comment.sort((a, b) => new Date(b.CreateDate) - new Date(a.CreateDate)))
+        if(coach.reviewWithUser?.length > 0){
+            setCoachComments(coach.reviewWithUser.sort((a, b) => new Date(b.reviewObject.created_time) - new Date(a.reviewObject.created_time)))
         }
     }, []);
 
@@ -46,16 +48,17 @@ export default function CoachDetailsCard(props) {
         try {
 
             const data = {
-                reviewText: reviewText,
-                coachId: coach.Id,
+                UserId :currentUser.id,
+                Body: reviewText,
+                CoachId: coach.coach.id,
             }
 
-            const response = await Resource.post('/comments', data);
+            const response = await Resource.post('/reviews', data);
 
             if(response.status === 200){
                 console.log('postComments: '+ JSON.stringify(response, null, 2))
 
-                setCoachComments(coachComments => [...coachComments, response.data].sort((a, b) => new Date(b.CreateDate) - new Date(a.CreateDate)))
+                setCoachComments(coachComments => [...coachComments, response.data.reviewWithUser].sort((a, b) => new Date(b.reviewObject.created_time) - new Date(a.reviewObject.created_time)))
                 ShowSuccessMessage('Comment added successfully')
                 setReviewText('');
                 handleCloseModal();
@@ -159,15 +162,15 @@ export default function CoachDetailsCard(props) {
             }}>
                 <div style={{width: '400px', paddingRight: '20px'}}>
                     {/*{abonnement.Photo}*/}
-                    <img style={{width: '100%', height: 'auto'}} src={sad_doing_abonnements_card}/>
+                    <img style={{width: '100%', height: 'auto'}} src={coach.coach.photo}/>
                 </div>
 
                 <div style={{marginTop: '5px', fontSize: '24px'}}>
-                    {coach.Name}
+                    {coach.coach.name}
                 </div>
 
                 <div style={{marginTop: '5px', fontSize: '18px', marginBottom:"20px"}}>
-                    {coach.Description}
+                    {coach.coach.description}
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom:"20px"}}>
@@ -175,13 +178,13 @@ export default function CoachDetailsCard(props) {
                     <div>
                         <div style={{paddingBottom: '15px', fontSize: '18px'}}>Services:</div>
                         <div style={{display: 'flex',}}>
-                            {coach.CoachService.map(Service => (
+                            {coach.services.map(Service => (
                                 <div style={{marginRight: '10px'}}>
                                     <div style={{width: '80px', height: '60px'}}>
                                         <img style={{width: '100%', height: 'auto'}}
-                                             src={sad_doing_abonnements_card}/>
+                                             src={Service.photo}/>
                                     </div>
-                                    <div>{Service.Service.Title}</div>
+                                    <div>{Service.title}</div>
                                 </div>
                             ))}
                         </div>
@@ -226,12 +229,11 @@ export default function CoachDetailsCard(props) {
                                         <img style={{width: '100%', height: 'auto'}} src={sad_doing_abonnements_card}/>
                                     </div>
                                     <div style={{display: 'flex', gap: '4px'}}>
-                                        <div>{comment.Client.FirstName}</div>
-                                        <div>{comment.Client.LastName}</div>
+                                        <div>{comment.userObject.name}</div>
                                     </div>
                                 </div>
 
-                                <div>{comment.CommentBody}</div>
+                                <div>{comment.reviewObject.body}</div>
                             </div>
                         ))}
                     </div> : <div>There are no comments</div>

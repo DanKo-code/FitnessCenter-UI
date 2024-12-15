@@ -9,7 +9,7 @@ export default function MainCoaches() {
     useEffect(() => {
         Resource.get('/coaches')
             .then(response => {
-                setCoaches(response.data.coaches.coachesWithServices);
+                setCoaches(response.data.coaches.coachWithServicesWithReviewsWithUsers);
             })
             .catch(error => {
                 showErrorMessage(error);
