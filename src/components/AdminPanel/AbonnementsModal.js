@@ -6,11 +6,12 @@ import TextField from "@mui/material/TextField";
 import {FormControl, InputAdornment, InputLabel, ListItemText, MenuItem, OutlinedInput, Select} from "@mui/material";
 import {Checkbox} from "@mui/joy";
 import Button from "@mui/material/Button";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Resource} from "../../context/AuthContext";
 import showErrorMessage from "../../utils/showErrorMessage";
 import ShowSuccessMessage from "../../utils/showSuccessMessage";
 import ShowErrorMessage from "../../utils/showErrorMessage";
+import noAva from "../../images/no_ava.png"
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -28,6 +29,9 @@ export default function AbonnementsModal({onClose}) {
     const [abonnements, setAbonnements] = useState([]);
     const [currentAbonnement, setCurrentAbonnement] = useState('');
 
+    const [photoUrl, setPhotoUrl] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null)
+    const fileInputRef = useRef(null);
     const [title, setTitle] = useState('');
     const [validityPeriod, setValidityPeriod] = useState('');
     const [visitingTime, setVisitingTime] = useState('');
@@ -35,10 +39,29 @@ export default function AbonnementsModal({onClose}) {
     const [currentServices, setCurrentServices] = useState([]);
     const [allServices, setAllServices] = useState([]);
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]; // Получаем выбранный файл
+        setSelectedFile(e.target.files[0])
+
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setPhotoUrl(event.target.result); // Устанавливаем URL изображения
+            };
+            reader.readAsDataURL(file); // Читаем файл как DataURL
+        } else {
+            alert("Please select a valid image file!"); // Сообщение, если файл не фото
+        }
+    };
+
+    const handleImageClick = () => {
+        fileInputRef.current.click(); // Активируем скрытый input
+    };
+
     useEffect(() => {
-        Resource.get('/abonnements')
+        Resource.get('/abonements')
             .then(response => {
-                setAbonnements(response.data);
+                setAbonnements(response.data.abonements.abonementsWithServices);
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -47,7 +70,7 @@ export default function AbonnementsModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                setAllServices(response.data);
+                setAllServices(response.data.services.serviceObject);
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -69,7 +92,7 @@ export default function AbonnementsModal({onClose}) {
 
     const handleAbonementSelection = async (selectedAbonnement) => {
 
-        if (currentAbonnement.Id === selectedAbonnement.Id) {
+        if (currentAbonnement?.abonement?.id === selectedAbonnement.abonement.id) {
             setCurrentAbonnement('');
         } else {
             setCurrentAbonnement(selectedAbonnement);
@@ -99,8 +122,8 @@ export default function AbonnementsModal({onClose}) {
         setPrice(truncatedInput);
     }
     const handleServicesChange = async (service) => {
-        if (currentServices.map(serviceObg => serviceObg.Id).includes(service.Id)) {
-            const updatedServices = currentServices.filter(serviceObj => serviceObj.Id !== service.Id);
+        if (currentServices.map(serviceObg => serviceObg.id).includes(service.id)) {
+            const updatedServices = currentServices.filter(serviceObj => serviceObj.id !== service.id);
             setCurrentServices(updatedServices);
         } else {
             setCurrentServices([service, ...currentServices]);
@@ -111,12 +134,14 @@ export default function AbonnementsModal({onClose}) {
     useEffect(() => {
 
         if (currentAbonnement) {
-            setTitle(currentAbonnement.Title);
-            setValidityPeriod(currentAbonnement.Validity);
-            setVisitingTime(currentAbonnement.VisitingTime);
-            setPrice(currentAbonnement.Price);
-            setCurrentServices(currentAbonnement.AbonementService.map(as => as.Service));
+            setPhotoUrl(currentAbonnement.abonement.photo)
+            setTitle(currentAbonnement.abonement.title);
+            setValidityPeriod(currentAbonnement.abonement.validity);
+            setVisitingTime(currentAbonnement.abonement.visiting_time);
+            setPrice(currentAbonnement.abonement.price);
+            setCurrentServices(currentAbonnement.services.map(as => as));
         } else {
+            setPhotoUrl('');
             setTitle('');
             setValidityPeriod('');
             setVisitingTime('');
@@ -165,7 +190,7 @@ export default function AbonnementsModal({onClose}) {
             validityPeriod: validityPeriod,
             visitingTime: visitingTime,
             price: price,
-            services: currentServices.map(service=>service.Id)
+            services: currentServices.map(service=>service.id)
         }
 
         try {
@@ -192,18 +217,29 @@ export default function AbonnementsModal({onClose}) {
                     ShowSuccessMessage("Abonement updated successfully")
                 }
             } else {
-                const response = await Resource.post('/abonnements', data);
+
+                const formData =new FormData();
+                formData.append('photo', selectedFile)
+                formData.append('title', title)
+                formData.append('validity_period', validityPeriod)
+                formData.append('visiting_time', visitingTime)
+                formData.append('price', price)
+                formData.append('services', currentServices.map(service=>service.id))
+
+                const response = await Resource.post('/abonements', formData);
 
                 if (response.status === 200) {
 
-                    setTitle(response.data.Title);
-                    setValidityPeriod(response.data.Validity);
-                    setVisitingTime(response.data.VisitingTime);
-                    setPrice(response.data.Price);
-                    setCurrentServices(response.data.AbonementService.map(as => as.Service));
+                    let abonementWithServices = response.data.abonement
 
-                    setAbonnements([response.data, ...abonnements]);
-                    setCurrentAbonnement(response.data);
+                    setTitle(abonementWithServices.abonement.title);
+                    setValidityPeriod(abonementWithServices.abonement.validity);
+                    setVisitingTime(abonementWithServices.abonement.visitingTime);
+                    setPrice(abonementWithServices.abonement.price);
+                    setCurrentServices(abonementWithServices.services.map(as => as));
+
+                    setAbonnements([abonementWithServices, ...abonnements]);
+                    setCurrentAbonnement(abonementWithServices);
                     ShowSuccessMessage("Abonement created successfully")
                 }
             }
@@ -249,7 +285,7 @@ export default function AbonnementsModal({onClose}) {
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {abonnements.length > 0 ? <div>
                             {abonnements.map(abonnement => (
-                                <div key={abonnement.Id}>
+                                <div key={abonnement.abonement.Id}>
                                     <div
                                         style={{border: currentAbonnement === abonnement ? '3px solid yellow' : 'none'}}>
                                         <AbonnementCard
@@ -259,7 +295,7 @@ export default function AbonnementsModal({onClose}) {
                                     </div>
                                 </div>
                             ))}
-                        </div> : <div>There are no orders</div>}
+                        </div> : <div>There are no abonements</div>}
                     </div>
                 </div>
                 <div style={{width: '60%', height: '100%'}}>
@@ -273,10 +309,31 @@ export default function AbonnementsModal({onClose}) {
                         {currentAbonnement ? 'Edit Abonnement' : 'Create Abonnement'}
                     </div>
 
+                    <input
+                        type="file"
+                        accept="image/*" // Разрешаем только фото
+                        ref={fileInputRef} // Привязываем ссылку
+                        style={{display: "none"}} // Скрываем элемент
+                        onChange={handleFileChange}
+                    />
+
                     <div style={{display: 'flex', alignItems: "center", gap: "10px"}}>
                         <div style={{marginBottom: '20px'}}>
                             {/*{abonnement.Photo}*/}
-                            <img style={{width: '200px', height: 'auto'}} src={sad_doing_abonnements_card}/>
+                            {/*<img style={{width: '200px', height: 'auto'}} src={sad_doing_abonnements_card}/>*/}
+
+                            <img
+                                style={{
+                                    width: '200px',
+                                    height: 'auto',
+                                    objectFit: "cover",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "8px",
+                                    cursor: "pointer", // Курсор как у кнопки
+                                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                                }}
+                                onClick={handleImageClick}
+                                src={photoUrl || noAva}/>
                         </div>
 
                         <TextField style={{marginBottom: '10px'}}
@@ -334,14 +391,14 @@ export default function AbonnementsModal({onClose}) {
                             multiple
                             value={currentServices}
                             input={<OutlinedInput label="Tag"/>}
-                            renderValue={(selected) => selected.map(sel => sel.Title + ' ')}
+                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
                             MenuProps={MenuProps}
                         >
                             {allServices.map((service) => (
-                                <MenuItem key={service.Id} value={service.Title}>
+                                <MenuItem key={service.id} value={service.title}>
                                     <Checkbox onChange={() => handleServicesChange(service)}
-                                              checked={currentServices.map(ser => ser.Id).includes(service.Id)}/>
-                                    <ListItemText primary={service.Title}/>
+                                              checked={currentServices.map(ser => ser.id).includes(service.id)}/>
+                                    <ListItemText primary={service.title}/>
                                 </MenuItem>
                             ))}
                         </Select>
