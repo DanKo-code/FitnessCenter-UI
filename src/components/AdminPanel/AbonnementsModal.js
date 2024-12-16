@@ -184,31 +184,35 @@ export default function AbonnementsModal({onClose}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const data = {
-            abonementId: currentAbonnement.Id,
-            title: title,
-            validityPeriod: validityPeriod,
-            visitingTime: visitingTime,
-            price: price,
-            services: currentServices.map(service=>service.id)
-        }
-
         try {
 
             if (currentAbonnement) {
-                const response = await Resource.put('/abonnements', data);
+
+                const formData =new FormData();
+                formData.append('id', currentAbonnement.abonement.id)
+                formData.append('photo', selectedFile)
+                formData.append('title', title)
+                formData.append('validity_period', validityPeriod)
+                formData.append('visiting_time', visitingTime)
+                formData.append('price', price)
+                formData.append('services', currentServices.map(service=>service.id))
+
+                const response = await Resource.put('/abonements', formData);
 
                 if (response.status === 200) {
-                    setTitle(response.data.Title);
-                    setValidityPeriod(response.data.Validity);
-                    setVisitingTime(response.data.VisitingTime);
-                    setPrice(response.data.Price);
-                    setCurrentServices(response.data.AbonementService.map(as => as.Service));
-                    setCurrentAbonnement(response.data);
+
+                    let abonementWithServices = response.data.abonement
+
+                    setTitle(abonementWithServices.abonement.title);
+                    setValidityPeriod(abonementWithServices.abonement.validity);
+                    setVisitingTime(abonementWithServices.abonement.visiting_time);
+                    setPrice(abonementWithServices.abonement.price);
+                    setCurrentServices(abonementWithServices.services.map(as => as));
+                    setCurrentAbonnement(abonementWithServices);
 
                     const newArray = abonnements.map(abonement => {
-                        if (abonement.Id === response.data.Id) {
-                            return response.data;
+                        if (abonement.abonement.id === abonementWithServices.abonement.id) {
+                            return abonementWithServices;
                         }
                         return abonement;
                     });
@@ -234,7 +238,7 @@ export default function AbonnementsModal({onClose}) {
 
                     setTitle(abonementWithServices.abonement.title);
                     setValidityPeriod(abonementWithServices.abonement.validity);
-                    setVisitingTime(abonementWithServices.abonement.visitingTime);
+                    setVisitingTime(abonementWithServices.abonement.visiting_time);
                     setPrice(abonementWithServices.abonement.price);
                     setCurrentServices(abonementWithServices.services.map(as => as));
 
