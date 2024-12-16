@@ -154,16 +154,16 @@ export default function AbonnementsModal({onClose}) {
     const handleDelete = async (event) => {
         event.preventDefault();
 
-        const abonementId = currentAbonnement.Id;
+        const abonementId = currentAbonnement.abonement.id;
 
-        const url = `/abonnements/${abonementId}`;
+        const url = `/abonements/${abonementId}`;
 
         try {
             if (currentAbonnement) {
                 const response = await Resource.delete(url);
 
                 if (response.status === 200) {
-                    setAbonnements(abonnements.filter(item => item.Id !== response.data.Id))
+                    setAbonnements(abonnements.filter(item => item.abonement.id !== response.data.abonement.id))
 
                     setTitle('');
                     setValidityPeriod('');
