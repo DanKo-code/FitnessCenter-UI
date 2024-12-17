@@ -28,6 +28,7 @@ import {Checkbox} from "@mui/joy";
 import {setUser} from "../../../states/storeSlice/appStateSlice";
 import AbonnementsModal from "../../AdminPanel/AbonnementsModal";
 import CoachesModal from "../../AdminPanel/CoachesModal";
+import ClientsModal from "../../AdminPanel/ClientsModal";
 
 /*const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -61,6 +62,16 @@ export default function MainAdminPanel() {
         setOpenCoachesModal(false);
     }
 
+    //Clients
+    const [openClientsModal, setOpenClientsModal] = useState(false);
+
+    const handleOpenClientsModal = async () => {
+        setOpenClientsModal(true);
+    }
+    const handleCloseClientsModal = () => {
+        setOpenClientsModal(false);
+    }
+
     return (
         <div style={{width: '70%', height: '100vh', background: 'rgba(117,100,163,255)'}}>
 
@@ -81,30 +92,17 @@ export default function MainAdminPanel() {
                 aria-labelledby="modal-title"
                 aria-describedby="modal-description"
             >
-                <div
-                    style={{
-                        color: "white",
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        background: "rgba(117,100,163,255)",
-                        borderRadius: "8px",
-                        padding: "20px",
-                        width: '1000px',
-                        height: '600px'
-                    }}
-                >
-                    <div>
-                        <IconButton onClick={handleCloseCoachesModal} size="large"
-                                    sx={{position: 'absolute', top: 10, right: 10}}>
-                            <CloseIcon/>
-                        </IconButton>
-                    </div>
+                <CoachesModal onClose={handleCloseCoachesModal}/>
+            </Modal>
 
-                    <CoachesModal onClose={handleCloseCoachesModal}/>
-
-                </div>
+            {/* Clients modal window */}
+            <Modal
+                open={openClientsModal}
+                onClose={handleCloseClientsModal}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+            >
+                <ClientsModal onClose={handleCloseClientsModal}/>
             </Modal>
 
             <div style={{
@@ -141,6 +139,20 @@ export default function MainAdminPanel() {
                     onClick={handleOpenCoachesModal}
                 >
                     Coaches
+                </Button>
+                <Button
+                    style={{
+                        marginTop: '20px',
+                        color: 'white',
+                        background: 'rgba(160, 147, 197, 1)',
+                        width: '270px',
+                        height: '50px',
+                        marginBottom: '50px',
+                    }}
+
+                    onClick={handleOpenClientsModal}
+                >
+                    Clients
                 </Button>
             </div>
 
