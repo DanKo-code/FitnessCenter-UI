@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Resource} from "../../context/AuthContext";
 import showErrorMessage from "../../utils/showErrorMessage";
 import IconButton from "@mui/material/IconButton";
@@ -21,6 +21,7 @@ import Button from "@mui/material/Button";
 import CoachCard from "../Main/MainCoaches/CoachesCard/coachCard";
 import ShowErrorMessage from "../../utils/showErrorMessage";
 import ShowSuccessMessage from "../../utils/showSuccessMessage";
+import noAva from "../../images/no_ava.png";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -37,15 +38,39 @@ export default function CoachesModal({onClose}) {
     const [coaches, setCoaches] = useState([]);
     const [currentCoach, setCurrentCoach] = useState('');
 
+    const [photoUrl, setPhotoUrl] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null)
+    const fileInputRef = useRef(null);
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
     const [currentServices, setCurrentServices] = useState([]);
     const [allServices, setAllServices] = useState([]);
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]; // Получаем выбранный файл
+        setSelectedFile(e.target.files[0])
+
+        if (file && file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                setPhotoUrl(event.target.result); // Устанавливаем URL изображения
+            };
+            reader.readAsDataURL(file); // Читаем файл как DataURL
+        } else {
+            alert("Please select a valid image file!"); // Сообщение, если файл не фото
+        }
+    };
+
+    const handleImageClick = () => {
+        fileInputRef.current.click(); // Активируем скрытый input
+    };
+
+
     const handleServicesChange = async (service) => {
-        if (currentServices.map(serviceObg => serviceObg.Id).includes(service.Id)) {
-            const updatedServices = currentServices.filter(serviceObj => serviceObj.Id !== service.Id);
+        if (currentServices.map(serviceObg => serviceObg.id).includes(service.id)) {
+            const updatedServices = currentServices.filter(serviceObj => serviceObj.id !== service.id);
             setCurrentServices(updatedServices);
         } else {
             setCurrentServices([service, ...currentServices]);
@@ -55,7 +80,7 @@ export default function CoachesModal({onClose}) {
     useEffect(() => {
         Resource.get('/coaches')
             .then(response => {
-                setCoaches(response.data);
+                setCoaches(response.data.coaches.coachWithServicesWithReviewsWithUsers);
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -64,7 +89,7 @@ export default function CoachesModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                setAllServices(response.data);
+                setAllServices(response.data.services.serviceObject);
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -76,13 +101,14 @@ export default function CoachesModal({onClose}) {
         setName('');
         setDescription('');
         setCurrentServices([]);
+        setPhotoUrl('');
 
         onClose()
     };
 
     const handleCoachSelection = async (selectedCoach) => {
 
-        if (currentCoach.Id === selectedCoach.Id) {
+        if (currentCoach?.coach?.id === selectedCoach.coach.id) {
             setCurrentCoach('');
         } else {
             setCurrentCoach(selectedCoach);
@@ -108,13 +134,15 @@ export default function CoachesModal({onClose}) {
     useEffect(() => {
 
         if (currentCoach) {
-            setName(currentCoach.Name);
-            setDescription(currentCoach.Description);
-            setCurrentServices(currentCoach.CoachService.map(as => as.Service));
+            setName(currentCoach.coach.name);
+            setDescription(currentCoach.coach.description);
+            setPhotoUrl(currentCoach.coach.photoUrl)
+            setCurrentServices(currentCoach.services.map(as => as));
         } else {
             setName('');
             setDescription('');
             setCurrentServices([]);
+            setPhotoUrl('');
         }
 
     }, [currentCoach]);
@@ -122,7 +150,7 @@ export default function CoachesModal({onClose}) {
     const handleDelete = async (event) => {
         event.preventDefault();
 
-        const coachId = currentCoach.Id;
+        const coachId = currentCoach.coach.id;
 
         const url = `/coaches/${coachId}`;
 
@@ -131,12 +159,13 @@ export default function CoachesModal({onClose}) {
                 const response = await Resource.delete(url);
 
                 if (response.status === 200) {
-                    setCoaches(coaches.filter(item => item.Id !== response.data.Id))
+                    setCoaches(coaches.filter(item => item.coach.id !== response.data.coach.id))
 
                     setName('');
                     setDescription('');
                     setCurrentServices([]);
                     setCurrentCoach('');
+                    setPhotoUrl('');
 
                     ShowSuccessMessage("Coach deleted successfully")
                 }
@@ -159,18 +188,32 @@ export default function CoachesModal({onClose}) {
 
         try {
 
+
+
             if (currentCoach) {
-                const response = await Resource.put('/coaches', data);
+
+                const formData =new FormData();
+                formData.append('id', currentCoach.coach.id)
+                formData.append('name', name)
+                formData.append('description', description)
+                formData.append('photo', selectedFile)
+                formData.append('services', currentServices.map(service=>service.id))
+
+                const response = await Resource.put('/coaches', formData);
 
                 if (response.status === 200) {
-                    setName(response.data.Name);
-                    setDescription(response.data.Description);
-                    setCurrentServices(response.data.CoachService.map(as => as.Service));
-                    setCurrentCoach(response.data);
+
+                    let coachWithServices = response.data.coach
+
+                    setName(coachWithServices.coach.name);
+                    setDescription(coachWithServices.coach.description);
+                    setCurrentServices(coachWithServices.services);
+                    setPhotoUrl(coachWithServices.coach.photo);
+                    setCurrentCoach(coachWithServices);
 
                     const newArray = coaches.map(coach => {
-                        if (coach.Id === response.data.Id) {
-                            return response.data;
+                        if (coach.coach.id === coachWithServices.coach.id) {
+                            return coachWithServices;
                         }
                         return coach;
                     });
@@ -179,15 +222,25 @@ export default function CoachesModal({onClose}) {
                     ShowSuccessMessage("Coach updated successfully")
                 }
             } else {
-                const response = await Resource.post('/coaches', data);
+
+                const formData =new FormData();
+                formData.append('name', name)
+                formData.append('description', description)
+                formData.append('photo', selectedFile)
+                formData.append('services', currentServices.map(service=>service.id))
+
+                const response = await Resource.post('/coaches', formData);
 
                 if (response.status === 200) {
 
-                    setName(response.data.Name);
-                    setDescription(response.data.Description);
-                    setCoaches([response.data, ...coaches]);
-                    setCurrentServices(response.data.CoachService.map(as => as.Service));
-                    setCurrentCoach(response.data);
+                    let coachWithServices = response.data.coach
+
+                    setName(coachWithServices.coach.name);
+                    setDescription(coachWithServices.coach.description);
+                    setPhotoUrl(coachWithServices.coach.photo);
+                    setCoaches([coachWithServices, ...coaches]);
+                    setCurrentServices(coachWithServices.services);
+                    setCurrentCoach(coachWithServices);
 
                     ShowSuccessMessage("Coach created successfully")
                 }
@@ -234,7 +287,7 @@ export default function CoachesModal({onClose}) {
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {coaches.length > 0 ? <div>
                             {coaches.map(coach => (
-                                <div key={coach.Id}>
+                                <div key={coach.coach.id}>
                                     <div
                                         style={{border: currentCoach === coach ? '3px solid yellow' : 'none'}}>
                                         {/*<AbonnementCard
@@ -242,7 +295,7 @@ export default function CoachesModal({onClose}) {
                                             onClick={() => handleAbonementSelection(abonnement)}
                                         />*/}
 
-                                        <CoachCard key={coach.Id} coach={coach} width={'370px'} height={'310px'} imageSize={'100px'} button={false} onClick={() => handleCoachSelection(coach)}/>
+                                        <CoachCard key={coach.coach.id} coach={coach} width={'370px'} height={'310px'} imageSize={'100px'} button={false} onClick={() => handleCoachSelection(coach)}/>
                                     </div>
                                 </div>
                             ))}
@@ -261,9 +314,34 @@ export default function CoachesModal({onClose}) {
                     </div>
 
                     <div style={{display: 'flex', alignItems: "center", gap: "10px"}}>
+
+                        <input
+                            type="file"
+                            accept="image/*" // Разрешаем только фото
+                            ref={fileInputRef} // Привязываем ссылку
+                            style={{display: "none"}} // Скрываем элемент
+                            onChange={handleFileChange}
+                        />
+
                         <div style={{marginBottom: '20px'}}>
                             {/*{abonnement.Photo}*/}
+
+                            <img
+                                style={{
+                                    width: '200px',
+                                    height: 'auto',
+                                    objectFit: "cover",
+                                    border: "1px solid #ccc",
+                                    borderRadius: "8px",
+                                    cursor: "pointer", // Курсор как у кнопки
+                                    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                                }}
+                                onClick={handleImageClick}
+                                src={photoUrl || noAva}/>
+
+{/*
                             <img style={{width: '200px', height: 'auto'}} src={sad_doing_abonnements_card}/>
+*/}
                         </div>
 
                         <TextField style={{marginBottom: '10px'}}
@@ -298,14 +376,14 @@ export default function CoachesModal({onClose}) {
                             multiple
                             value={currentServices}
                             input={<OutlinedInput label="Tag"/>}
-                            renderValue={(selected) => selected.map(sel => sel.Title + ' ')}
+                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
                             MenuProps={MenuProps}
                         >
                             {allServices.map((service) => (
-                                <MenuItem key={service.Id} value={service.Title}>
+                                <MenuItem key={service.id} value={service.title}>
                                     <Checkbox onChange={() => handleServicesChange(service)}
-                                              checked={currentServices.map(ser => ser.Id).includes(service.Id)}/>
-                                    <ListItemText primary={service.Title}/>
+                                              checked={currentServices.map(ser => ser.id).includes(service.id)}/>
+                                    <ListItemText primary={service.title}/>
                                 </MenuItem>
                             ))}
                         </Select>

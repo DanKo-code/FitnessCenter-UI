@@ -85,6 +85,7 @@ export default function AbonnementsModal({onClose}) {
         setPrice('');
         setCurrentServices([]);
         setCurrentAbonnement('');
+        setPhotoUrl('');
 
         onClose()
         //setOpenAbonnementsModal(false);
