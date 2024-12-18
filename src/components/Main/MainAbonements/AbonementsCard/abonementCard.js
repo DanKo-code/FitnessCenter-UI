@@ -13,9 +13,12 @@ import io from 'socket.io-client';
 import {setUser} from "../../../../states/storeSlice/appStateSlice";
 import showSuccessMessage from "../../../../utils/showSuccessMessage";
 import ShowErrorMessage from "../../../../utils/showErrorMessage";
-
+import { useStripe } from "@stripe/react-stripe-js";
 
 export default function AbonnementCard(props) {
+
+    const stripe = useStripe();
+
 
     const dispatch = useDispatch();
     let user = useSelector((state) => state.userSliceMode.user);
@@ -25,49 +28,25 @@ export default function AbonnementCard(props) {
     const handleBuy = async (event) => {
         try {
 
-            // Создаем новый объект, исключая свойство 'socket'
-            const { socket, ...userWithoutSocket } = user;
-
-            const postOrdersData = {
-                abonementId: abonnement.Id
+            let postOrdersData = {
+                "ClientId": user.id,
+                "AbonementId": abonnement.abonement.id,
+                "StripePriceId": abonnement.abonement.stripe_price_id,
             }
 
-            const response = await Resource.post('/orders', postOrdersData);
+            const response = await Resource.post('/create-checkout-session', postOrdersData);
 
             if (response.status === 200) {
-                showSuccessMessage("Abonement bought successfully");
 
-                const createdOrderId = response.data.Id;
+                const result = await stripe.redirectToCheckout({
+                    sessionId: response.data.sessionUrl,
+                });
 
-                const socketStartTimerData = {
-                    orderId: createdOrderId,
-                    abonementTitle: abonnement.Title,
-                    abonementValidity: abonnement.Validity
+                if (result.error) {
+                    console.error(result.error.message);
                 }
 
-                if(user.socket){
-                    user.socket.emit('startTimer', socketStartTimerData);
-                }
-                else{
-                    const accessToken = inMemoryJWT.getToken();
-
-                    let socket = await io('http://localhost:3002', {
-                        reconnection: true,
-                        reconnectionAttempts: 5,
-                        reconnectionDelay: 1000,
-                        extraHeaders: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    });
-                    socket.emit('startTimer', socketStartTimerData);
-                    user.socket.on('expiration', (message) => {
-                        showSuccessMessage(message);
-                    });
-                    user = {...user, socket: socket}
-                    dispatch(setUser(user));
-                }
-
-
+                console.log("CreatedOrder: "+ JSON.stringify(response.data.order, null, 2))
             }
         } catch (e) {
             ShowErrorMessage(e);
