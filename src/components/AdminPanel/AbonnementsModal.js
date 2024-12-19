@@ -288,7 +288,7 @@ export default function AbonnementsModal({onClose}) {
                         All Abonnements
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
-                        {abonnements.length > 0 ? <div>
+                        {abonnements?.length > 0 ? <div>
                             {abonnements.map(abonnement => (
                                 <div key={abonnement.abonement.id}>
                                     <div
