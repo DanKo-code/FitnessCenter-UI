@@ -54,14 +54,14 @@ export default function MainProfile() {
             setName(user.name);
             setPhotoUrl(user.photo);
 
-            /*Resource.get('/ordersByUser')
+            Resource.get('/orders/'+user.id)
                 .then(response => {
-                    console.log('get.ordersByUser response.data: '+JSON.stringify(response.data, null, 2))
-                    setOrders(response.data)
+                    console.log('get.ordersByUser response.data: '+JSON.stringify(response.data.orders, null, 2))
+                    setOrders(response.data.orders)
                 })
                 .catch(error => {
                     console.error('Failed to fetch orders:', error);
-                });*/
+                });
         }
     }, [user]); // Выполнится только при изменении `user`
 
@@ -171,12 +171,17 @@ export default function MainProfile() {
                         justifyContent: 'center',
                         marginBottom: '20px',
                         fontSize: '24px'
-                    }}>Purchased Abonnements
+                    }}>Purchased Abonements
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {orders ? <div>
                             {orders.map(order => (
-                                <AbonnementCard abonnement={order.Abonement} status={order.Status}/>
+                                <AbonnementCard abonnement={
+                                    {
+                                        abonement: order.abonementObject,
+                                        services: order.serviceObjects,
+                                    }
+                                } status={order.orderObject.status}/>
                             ))}
                         </div> : <div>There are no orders</div>}
                     </div>

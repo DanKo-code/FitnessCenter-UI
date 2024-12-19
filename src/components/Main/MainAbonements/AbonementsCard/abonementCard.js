@@ -81,7 +81,7 @@ export default function AbonnementCard(props) {
             marginBottom: '10px',
             position: "relative"
         }}>
-            {status === 0 && <div style={styles.overlay}>Expired</div>}
+            {status === "Expired" && <div style={styles.overlay}>Expired</div>}
 
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <div style={{marginTop: '5px', fontSize: '24px'}}>
