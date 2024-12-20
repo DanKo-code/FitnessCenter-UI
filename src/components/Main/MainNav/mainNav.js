@@ -13,6 +13,7 @@ import config from "../../../config";
 import inMemoryJWT from "../../../services/inMemoryJWT";
 import showErrorMessage from "../../../utils/showErrorMessage";
 import {AuthContext} from "../../../context/AuthContext";
+import {useSelector} from "react-redux";
 
 export const AuthClient = axios.create({
     baseURL: `${config.API_URL}/auth`,
@@ -20,6 +21,8 @@ export const AuthClient = axios.create({
 })
 
 export default function MainNav() {
+
+    let user = useSelector((state) => state.userSliceMode.user);
 
     const {LogOut} = useContext(AuthContext);
     const navigate = useNavigate();
@@ -103,11 +106,14 @@ export default function MainNav() {
                             Edit Profile
                         </Button>
 
-                        <Button style={{color: 'white', background: 'rgba(117,100,163,255)', height: '62px', marginTop: '5%'}}
-                                onClick={()=>{navigate('/adminPanel')}}>
+                        { user.role === "admin" && (
+                            <Button style={{color: 'white', background: 'rgba(117,100,163,255)', height: '62px', marginTop: '5%'}}
+                                    onClick={()=>{navigate('/adminPanel')}}>
 
-                            Admin panel
-                        </Button>
+                                Admin panel
+                            </Button>
+                            )
+                        }
 
                         <Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '30%'}}
                                 startIcon={< ExitToAppIcon sx={{width: 50, height: 50, transform: 'scaleX(-1)'}}/>}
