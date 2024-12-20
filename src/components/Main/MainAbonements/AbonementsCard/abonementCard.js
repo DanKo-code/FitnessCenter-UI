@@ -166,7 +166,7 @@ export default function AbonnementCard(props) {
                     ))}
                 </div>
 
-                {buyButton ? <Button
+                {buyButton && user.role !== 'admin' ? <Button
                     style={{
                         color: 'white',
                         background: 'rgba(117,100,163,255)',
