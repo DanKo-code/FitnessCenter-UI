@@ -53,7 +53,9 @@ export default function ClientsModal({onClose}) {
     useEffect(() => {
         Resource.get('/users')
             .then(response => {
-                setClients(response.data.clients);
+                if(response.data.clients > 0){
+                    setClients(response.data.clients);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);

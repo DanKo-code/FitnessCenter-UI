@@ -33,24 +33,27 @@ export default function MainAbonnements() {
         Resource.get('/abonements')
             .then(response => {
 
+                if (response.data.abonements.length > 0) {
+
                 let abonements = response.data.abonements.abonementsWithServices
 
                 setAbonnements(abonements);
                 console.log('abonements: ' + JSON.stringify(abonements, null, 2))
 
-                if (abonements.length > 0) {
+
 
                     const sortPrices = abonements.map(abonement => abonement.abonement.price).sort((a, b) => a - b);
 
-                    console.log('sortPrices: '+JSON.stringify(sortPrices, null, 2));
+                    console.log('sortPrices: ' + JSON.stringify(sortPrices, null, 2));
 
-                    setMaxAbonementPrice(sortPrices[sortPrices.length -1]+100)
+                    setMaxAbonementPrice(sortPrices[sortPrices.length - 1] + 100)
                     setMinAbonementPrice(sortPrices[0])
 
-                    setPriceRange([0,sortPrices[sortPrices.length -1]+100])
-                }
+                    setPriceRange([0, sortPrices[sortPrices.length - 1] + 100])
 
-                setSearchedAbonnements(abonements);
+
+                    setSearchedAbonnements(abonements);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);

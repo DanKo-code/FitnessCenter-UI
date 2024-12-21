@@ -80,7 +80,10 @@ export default function CoachesModal({onClose}) {
     useEffect(() => {
         Resource.get('/coaches')
             .then(response => {
-                setCoaches(response.data.coaches.coachWithServicesWithReviewsWithUsers);
+
+                if(response.data.coaches > 0){
+                    setCoaches(response.data.coaches.coachWithServicesWithReviewsWithUsers);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -89,7 +92,9 @@ export default function CoachesModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                setAllServices(response.data.services.serviceObject);
+                if(response.data.services > 0){
+                    setAllServices(response.data.services.serviceObject);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -329,7 +334,7 @@ export default function CoachesModal({onClose}) {
                             <img
                                 style={{
                                     width: '200px',
-                                    height: 'auto',
+                                    height: '150px',
                                     objectFit: "cover",
                                     border: "1px solid #ccc",
                                     borderRadius: "8px",

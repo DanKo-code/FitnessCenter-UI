@@ -61,7 +61,9 @@ export default function AbonnementsModal({onClose}) {
     useEffect(() => {
         Resource.get('/abonements')
             .then(response => {
-                setAbonnements(response.data.abonements.abonementsWithServices);
+                if(response.data.abonements.length > 0) {
+                    setAbonnements(response.data.abonements.abonementsWithServices);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -70,7 +72,9 @@ export default function AbonnementsModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                setAllServices(response.data.services.serviceObject);
+                if(response.data.services > 0){
+                    setAllServices(response.data.services.serviceObject);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -330,7 +334,7 @@ export default function AbonnementsModal({onClose}) {
                             <img
                                 style={{
                                     width: '200px',
-                                    height: 'auto',
+                                    height: '100px',
                                     objectFit: "cover",
                                     border: "1px solid #ccc",
                                     borderRadius: "8px",
