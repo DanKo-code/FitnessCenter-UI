@@ -14,6 +14,7 @@ import {Resource} from "../../../../context/AuthContext";
 import showErrorMessage from "../../../../utils/showErrorMessage";
 import ShowErrorMessage from "../../../../utils/showErrorMessage";
 import ShowSuccessMessage from "../../../../utils/showSuccessMessage";
+import noAva from "../../../../images/no_ava.png";
 
 
 
@@ -63,17 +64,22 @@ export default function CoachDetailsCard(props) {
                 setReviewText('');
                 handleCloseModal();
             }
-        } catch (e) {
-            ShowErrorMessage(e);
-            console.error('response.status: ' + JSON.stringify(e.response.data.message, null, 2))
+        } catch (error) {
+            if(error?.response?.data?.error) {
+                ShowErrorMessage(error?.response?.data?.error)
+            } else {
+                ShowErrorMessage("Can't update coach")
+            }
+
+            console.error('Can\'t update coach: ' + JSON.stringify(error, null, 2))
         }
     };
 
     const handleRevieChange = async (e) => {
         const inputValue = e.target.value;
 
-        if (inputValue.length > 500) {
-            const truncatedText = inputValue.slice(0, 500);
+        if (inputValue.length > 255) {
+            const truncatedText = inputValue.slice(0, 255);
             setReviewText(truncatedText);
         } else {
             setReviewText(inputValue);
@@ -218,23 +224,33 @@ export default function CoachDetailsCard(props) {
                             /*<AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
                                             buyButton={{buttonState: true}}/>*/
 
-
-                            <div style={{
-                                display: 'flex',
-                                marginBottom: '50px',
-                                background: 'rgba(160, 147, 197, 1)', padding:'10px', borderRadius: '10px', width:'100%'}}>
-                                <div style={{marginRight: '10px'}}>
-                                    <div style={{width: '100px'}}>
-                                        {/*{abonnement.Photo}*/}
-                                        <img style={{width: '100%', height: 'auto'}} src={sad_doing_abonnements_card}/>
-                                    </div>
-                                    <div style={{display: 'flex', gap: '4px'}}>
-                                        <div>{comment.userObject.name}</div>
-                                    </div>
-                                </div>
-
-                                <div>{comment.reviewObject.body}</div>
+                            <div
+                            style={{
+                            display: 'flex',
+                            marginBottom: '50px',
+                            background: 'rgba(160, 147, 197, 1)',
+                            padding: '10px',
+                            borderRadius: '10px',
+                            width: '500px',
+                            alignItems: 'flex-start', // Гарантирует, что текст не выходит за пределы изображения
+                        }}
+                    >
+                        <div style={{ marginRight: '10px' }}>
+                            <div style={{ width: '100px' }}>
+                                {/* {abonnement.Photo} */}
+                                <img style={{ width: '100%', height: 'auto' }} src={comment.userObject.name.photo || noAva} />
                             </div>
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                                <div>{comment.userObject.name}</div>
+                            </div>
+                        </div>
+
+                        {/* Текстовый блок */}
+                        <div style={{ flex: 1, whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                            {comment.reviewObject.body}
+                        </div>
+                    </div>
+
                         ))}
                     </div> : <div>There are no comments</div>
                     }
