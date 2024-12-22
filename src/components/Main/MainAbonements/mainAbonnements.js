@@ -33,7 +33,7 @@ export default function MainAbonnements() {
         Resource.get('/abonements')
             .then(response => {
 
-                if (response.data.abonements.length > 0) {
+                if (response.data.abonements?.abonementsWithServices?.length > 0) {
 
                 let abonements = response.data.abonements.abonementsWithServices
 

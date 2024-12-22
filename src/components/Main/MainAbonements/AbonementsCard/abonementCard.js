@@ -154,7 +154,7 @@ export default function AbonnementCard(props) {
                 justifyContent: 'space-between'
             }}>
                 <div style={{display: 'flex',}}>
-                    {abonnement.services?.length > 0 &&
+                    {abonnement?.services?.length > 0 &&
                         abonnement.services.map(Service => (
                         <div style={{marginRight: '10px'}}>
                             <div style={{width: '80px', height: '60px'}}>

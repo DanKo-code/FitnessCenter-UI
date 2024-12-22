@@ -81,7 +81,7 @@ export default function CoachesModal({onClose}) {
         Resource.get('/coaches')
             .then(response => {
 
-                if(response.data.coaches > 0){
+                if(response.data.coaches?.coachWithServicesWithReviewsWithUsers?.length > 0){
                     setCoaches(response.data.coaches.coachWithServicesWithReviewsWithUsers);
                 }
             })
@@ -92,7 +92,7 @@ export default function CoachesModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                if(response.data.services > 0){
+                if(response.data.services?.serviceObject?.length > 0){
                     setAllServices(response.data.services.serviceObject);
                 }
             })

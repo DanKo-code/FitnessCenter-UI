@@ -61,7 +61,7 @@ export default function AbonnementsModal({onClose}) {
     useEffect(() => {
         Resource.get('/abonements')
             .then(response => {
-                if(response.data.abonements.length > 0) {
+                if(response.data.abonements?.abonementsWithServices?.length > 0) {
                     setAbonnements(response.data.abonements.abonementsWithServices);
                 }
             })
@@ -72,7 +72,7 @@ export default function AbonnementsModal({onClose}) {
 
         Resource.get('/services')
             .then(response => {
-                if(response.data.services > 0){
+                if(response.data.services.serviceObject.length > 0){
                     setAllServices(response.data.services.serviceObject);
                 }
             })
@@ -254,8 +254,14 @@ export default function AbonnementsModal({onClose}) {
             }
 
         } catch (error) {
-            ShowErrorMessage(error)
-            console.error('response.status: ' + JSON.stringify(error.response.data.message, null, 2))
+
+            if(error?.response?.data?.error) {
+                ShowErrorMessage(error?.response?.data?.error)
+            } else {
+                ShowErrorMessage("Can't create abonement")
+            }
+
+            console.error('Can\'t create abonement: ' + JSON.stringify(error, null, 2))
         }
     }
 
