@@ -189,9 +189,10 @@ export default function AbonnementsModal({onClose}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        try {
+        if (currentAbonnement) {
 
-            if (currentAbonnement) {
+            //update abonement
+            try {
 
                 const formData =new FormData();
                 formData.append('id', currentAbonnement.abonement.id)
@@ -225,7 +226,22 @@ export default function AbonnementsModal({onClose}) {
                     setAbonnements(newArray);
                     ShowSuccessMessage("Abonement updated successfully")
                 }
-            } else {
+
+            } catch (error) {
+
+                if(error?.response?.data?.error) {
+                    ShowErrorMessage(error?.response?.data?.error)
+                } else {
+                    ShowErrorMessage("Can't update abonement")
+                }
+
+                console.error('Can\'t update abonement: ' + JSON.stringify(error, null, 2))
+            }
+
+        } else {
+
+            //create abonement
+            try{
 
                 const formData =new FormData();
                 formData.append('photo', selectedFile)
@@ -251,18 +267,20 @@ export default function AbonnementsModal({onClose}) {
                     setCurrentAbonnement(abonementWithServices);
                     ShowSuccessMessage("Abonement created successfully")
                 }
+
+            } catch (error) {
+
+                if(error?.response?.data?.error) {
+                    ShowErrorMessage(error?.response?.data?.error)
+                } else {
+                    ShowErrorMessage("Can't create abonement")
+                }
+
+                console.error('Can\'t create abonement: ' + JSON.stringify(error, null, 2))
             }
-
-        } catch (error) {
-
-            if(error?.response?.data?.error) {
-                ShowErrorMessage(error?.response?.data?.error)
-            } else {
-                ShowErrorMessage("Can't create abonement")
-            }
-
-            console.error('Can\'t create abonement: ' + JSON.stringify(error, null, 2))
         }
+
+
     }
 
     return (

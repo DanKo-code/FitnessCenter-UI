@@ -67,7 +67,6 @@ export default function CoachesModal({onClose}) {
         fileInputRef.current.click(); // Активируем скрытый input
     };
 
-
     const handleServicesChange = async (service) => {
         if (currentServices.map(serviceObg => serviceObg.id).includes(service.id)) {
             const updatedServices = currentServices.filter(serviceObj => serviceObj.id !== service.id);
@@ -141,7 +140,7 @@ export default function CoachesModal({onClose}) {
         if (currentCoach) {
             setName(currentCoach.coach.name);
             setDescription(currentCoach.coach.description);
-            setPhotoUrl(currentCoach.coach.photoUrl)
+            setPhotoUrl(currentCoach.coach.photo)
             setCurrentServices(currentCoach.services.map(as => as));
         } else {
             setName('');
@@ -184,19 +183,10 @@ export default function CoachesModal({onClose}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const data = {
-            id: currentCoach.Id,
-            name: name,
-            description: description,
-            services: currentServices.map(service=>service.Id)
-        }
+        if (currentCoach) {
 
-        try {
-
-
-
-            if (currentCoach) {
-
+            //update coach
+            try {
                 const formData =new FormData();
                 formData.append('id', currentCoach.coach.id)
                 formData.append('name', name)
@@ -213,7 +203,6 @@ export default function CoachesModal({onClose}) {
                     setName(coachWithServices.coach.name);
                     setDescription(coachWithServices.coach.description);
                     setCurrentServices(coachWithServices.services);
-                    setPhotoUrl(coachWithServices.coach.photo);
                     setCurrentCoach(coachWithServices);
 
                     const newArray = coaches.map(coach => {
@@ -226,8 +215,21 @@ export default function CoachesModal({onClose}) {
                     setCoaches(newArray);
                     ShowSuccessMessage("Coach updated successfully")
                 }
-            } else {
+            } catch (error) {
 
+                if(error?.response?.data?.error) {
+                    ShowErrorMessage(error?.response?.data?.error)
+                } else {
+                    ShowErrorMessage("Can't update coach")
+                }
+
+                console.error('Can\'t update coach: ' + JSON.stringify(error, null, 2))
+            }
+        }
+        else {
+
+            //create coach
+            try {
                 const formData =new FormData();
                 formData.append('name', name)
                 formData.append('description', description)
@@ -249,11 +251,17 @@ export default function CoachesModal({onClose}) {
 
                     ShowSuccessMessage("Coach created successfully")
                 }
-            }
 
-        } catch (error) {
-            ShowErrorMessage(error)
-            console.error('response.status: ' + JSON.stringify(error.response.data.message, null, 2))
+            } catch (error) {
+
+                if(error?.response?.data?.error) {
+                    ShowErrorMessage(error?.response?.data?.error)
+                } else {
+                    ShowErrorMessage("Can't create coach")
+                }
+
+                console.error('Can\'t create coach: ' + JSON.stringify(error, null, 2))
+            }
         }
     }
 

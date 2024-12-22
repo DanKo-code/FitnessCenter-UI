@@ -51,17 +51,29 @@ export default function ClientsModal({onClose}) {
     }
 
     useEffect(() => {
-        Resource.get('/users')
-            .then(response => {
-                if(response.data.clients > 0){
-                    setClients(response.data.clients);
+        const fetchClients = async () => {
+            try {
+                const response = await Resource.get('/users');
+
+                if (response.status === 200) {
+                    if (response?.data?.clients?.length > 0) {
+                        setClients(response.data.clients);
+                    }
                 }
-            })
-            .catch(error => {
-                showErrorMessage(error);
-                console.error('Failed to fetch clients:', error);
-            });
+            } catch (error) {
+                if (error?.response?.data?.error) {
+                    ShowErrorMessage(error.response.data.error);
+                } else {
+                    ShowErrorMessage("Can't get clients");
+                }
+
+                console.error("Can't get clients: " + JSON.stringify(error, null, 2));
+            }
+        };
+
+        fetchClients();
     }, []);
+
 
     return(
         <div
