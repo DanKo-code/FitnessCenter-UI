@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import inMemoryJWT from "../../services/inMemoryJWT";
 import showErrorMessage from "../../utils/showErrorMessage";
 import {AuthContext} from "../../context/AuthContext";
+import ShowErrorMessage from "../../utils/showErrorMessage";
 
 
 export default function SignIn() {
@@ -40,8 +41,20 @@ export default function SignIn() {
                 navigate('/main');
             }
         } catch (error) {
-            showErrorMessage(error);
-            console.error('response.status: ' + JSON.stringify(error.response.data.message, null, 2))
+            if(error?.response?.data?.errors) {
+
+                const errorMessages = error.response.data.errors;
+
+                const formattedErrors = Object.entries(errorMessages)
+                    .map(([field, message]) => `${message}`)
+                    .join('\n');
+
+                ShowErrorMessage(formattedErrors)
+            } else {
+                ShowErrorMessage("Incorrect SignIn Data")
+            }
+
+            console.error('Incorrect SignIn Data: ' + JSON.stringify(error, null, 2))
         }
     };
 

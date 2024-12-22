@@ -6,12 +6,17 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate, Link } from 'react-router-dom';
 import showErrorMessage from "../../utils/showErrorMessage";
 import {AuthContext} from "../../context/AuthContext";
+import ShowErrorMessage from "../../utils/showErrorMessage";
+import {setUser} from "../../states/storeSlice/appStateSlice";
+import {useDispatch} from "react-redux";
 
 export default function SignUp() {
 
     const {handleSignUp} = useContext(AuthContext);
 
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -32,12 +37,24 @@ export default function SignUp() {
              const response = await handleSignUp(data);
 
             if (response.status === 200) {
-
+                dispatch(setUser(response.data.user));
                 navigate('/signin');
             }
         } catch (error) {
-            showErrorMessage(error);
-            console.error('response.status: ' + JSON.stringify(error, null, 2))
+            if(error?.response?.data?.errors) {
+
+                const errorMessages = error.response.data.errors;
+
+                const formattedErrors = Object.entries(errorMessages)
+                    .map(([field, message]) => `${message}`)
+                    .join('\n');
+
+                ShowErrorMessage(formattedErrors)
+            } else {
+                ShowErrorMessage("Incorrect SignUp Data")
+            }
+
+            console.error('Incorrect SignUp Data: ' + JSON.stringify(error, null, 2))
         }
     };
 
