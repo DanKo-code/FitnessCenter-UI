@@ -76,27 +76,24 @@ export default function MainProfile() {
         formData.append('photo', selectedFile)
         formData.append('name', name)
 
-        let url = "http://localhost:4001/users/"+user.id
-
         try {
-            const response = await fetch(url, {
-                method: "Put",
-                body: formData,
-                })
+            const response = await Resource.put('/users/'+user.id, formData)
 
-            if (response.ok) {
-                ShowSuccessMessage('Client updated successfully')
+            if (response.status === 200) {
 
-                const responseBody = await response.json()
-                console.log("Response body: ", responseBody)
-
-                const newUser = responseBody.user
+                const newUser = response.data.user
 
                 dispatch(setUser(newUser));
+                ShowSuccessMessage('User updated successfully')
             }
         } catch (error) {
-            ShowErrorMessage(error);
-            console.error('response.status: ' + JSON.stringify(error.response.data.message, null, 2))
+            if(error?.response?.data?.error) {
+                ShowErrorMessage(error?.response?.data?.error)
+            } else {
+                ShowErrorMessage("Can't update user")
+            }
+
+            console.error('Can\'t update user: ' + JSON.stringify(error, null, 2))
         }
     }
 
