@@ -46,7 +46,7 @@ export default function ClientsModal({onClose}) {
             }
         } catch (error) {
             ShowErrorMessage(error)
-            console.error('response.status: ' + JSON.stringify(error.response.data.message, null, 2))
+            console.error('response.status: ' + JSON.stringify(error, null, 2))
         }
     }
 
