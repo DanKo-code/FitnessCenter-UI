@@ -1,19 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {FormControl, InputLabel, MenuItem, Select, Slider} from "@mui/material";
 import TextField from "@mui/material/TextField";
-import axios from 'axios';
-import HouseIcon from "@mui/icons-material/House";
-import Button from "@mui/material/Button";
-
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import LocalAtmIcon from '@mui/icons-material/LocalAtm';
-
-import sad_doing_abonnements_card from '../../../images/sad_doing_abonnements_card.jpg'
 import AbonnementCard from "./AbonementsCard/abonementCard";
 import showErrorMessage from "../../../utils/showErrorMessage";
-import config from "../../../config";
-import inMemoryJWT from "../../../services/inMemoryJWT";
 import {Resource} from "../../../context/AuthContext";
 
 
@@ -26,33 +15,24 @@ export default function MainAbonnements() {
     const [showAbonnementsList, setShowAbonnementsList] = useState(true);
     const [maxAbonementPrice, setMaxAbonementPrice] = useState(0);
     const [minAbonementPrice, setMinAbonementPrice] = useState(0);
-
+    const [priceRange, setPriceRange] = useState([0, 0]);
+    const [sortOrder, setSortOrder] = useState("asc");
 
     useEffect(() => {
-
         Resource.get('/abonements')
             .then(response => {
-
                 if (response.data.abonements?.abonementsWithServices?.length > 0) {
+                    let abonements = response.data.abonements.abonementsWithServices;
 
-                let abonements = response.data.abonements.abonementsWithServices
-
-                setAbonnements(abonements);
-                console.log('abonements: ' + JSON.stringify(abonements, null, 2))
-
-
+                    setAbonnements(abonements);
 
                     const sortPrices = abonements.map(abonement => abonement.abonement.price).sort((a, b) => a - b);
 
-                    console.log('sortPrices: ' + JSON.stringify(sortPrices, null, 2));
+                    setMaxAbonementPrice(sortPrices[sortPrices.length - 1] + 100);
+                    setMinAbonementPrice(sortPrices[0]);
+                    setPriceRange([0, sortPrices[sortPrices.length - 1] + 100]);
 
-                    setMaxAbonementPrice(sortPrices[sortPrices.length - 1] + 100)
-                    setMinAbonementPrice(sortPrices[0])
-
-                    setPriceRange([0, sortPrices[sortPrices.length - 1] + 100])
-
-
-                    setSearchedAbonnements(abonements);
+                    setSearchedAbonnements(sortAbonnements(abonements, sortOrder));
                 }
             })
             .catch(error => {
@@ -62,14 +42,39 @@ export default function MainAbonnements() {
     }, []);
 
     const handleTitleSearchChange = (event) => {
-
         setTitleSearch(event.target.value);
 
-        if (!event.target.value) {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.price >= priceRange[0] && abonnement.abonement.price <= priceRange[1]));
-        } else {
-            setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.title.toLowerCase().includes(event.target.value.toLowerCase())));
-        }
+        const filtered = abonnements.filter(abonnement =>
+            abonnement.abonement.title.toLowerCase().includes(event.target.value.toLowerCase()) &&
+            abonnement.abonement.price >= priceRange[0] &&
+            abonnement.abonement.price <= priceRange[1]
+        );
+
+        setSearchedAbonnements(sortAbonnements(filtered, sortOrder));
+    };
+
+    const handlePriceRangeChange = (event, newValue) => {
+        setPriceRange(newValue);
+
+        const filtered = abonnements.filter(abonnement =>
+            abonnement.abonement.price >= newValue[0] &&
+            abonnement.abonement.price <= newValue[1]
+        );
+
+        setSearchedAbonnements(sortAbonnements(filtered, sortOrder));
+    };
+
+    const handleSortOrderChange = (event) => {
+        setSortOrder(event.target.value);
+        setSearchedAbonnements(sortAbonnements(searchedAbonnements, event.target.value));
+    };
+
+    const sortAbonnements = (abonnements, order) => {
+        return abonnements.slice().sort((a, b) => {
+            return order === "asc"
+                ? a.abonement.price - b.abonement.price
+                : b.abonement.price - a.abonement.price;
+        });
     };
 
     useEffect(() => {
@@ -80,15 +85,6 @@ export default function MainAbonnements() {
         }
     }, [searchedAbonnements]);
 
-    const [priceRange, setPriceRange] = useState([0, 0]);
-
-    const handlePriceRangeChange = (event, newValue) => {
-        setPriceRange(newValue);
-
-        setSearchedAbonnements(abonnements.filter(abonnement => abonnement.abonement.price >= priceRange[0] && abonnement.abonement.price <= priceRange[1]));
-    };
-
-
     return (
         <div style={{
             width: '70%',
@@ -97,15 +93,13 @@ export default function MainAbonnements() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center"
-
         }}>
             <div style={{
                 marginLeft: '5%',
                 marginRight: '5%'
             }}>
-                <div style={{display: 'flex', justifyContent: 'space-between'}}>
-
-                    <div style={{width: '40%'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <div style={{width: '30%'}}>
                         <div style={{textAlign: 'center'}}>Price:</div>
                         <Slider
                             aria-labelledby="range-slider"
@@ -118,7 +112,7 @@ export default function MainAbonnements() {
                     </div>
 
                     <TextField
-                        style={{width: '40%'}}
+                        style={{width: '30%'}}
                         fullWidth
                         id="search"
                         label="Name Search"
@@ -127,23 +121,42 @@ export default function MainAbonnements() {
                         value={titleSearch}
                         onChange={handleTitleSearchChange}
                     />
+
+                    <FormControl style={{width: '30%'}}>
+                        <InputLabel id="sort-order-label">Sort by Price</InputLabel>
+                        <Select
+                            labelId="sort-order-label"
+                            id="sort-order"
+                            value={sortOrder}
+                            onChange={handleSortOrderChange}
+                            >
+                            <MenuItem value="asc">Ascending</MenuItem>
+                            <MenuItem value="desc">Descending</MenuItem>
+                        </Select>
+                    </FormControl>
                 </div>
+
                 <div style={{display: 'flex', justifyContent: 'center'}}>
-                    {showAbonnementsList ? <div style={{marginTop: '40px', height: '400px', overflowY: 'scroll'}}>
-                        {searchedAbonnements.map(abonnement => (
-                            <AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
-                                            buyButton={{buttonState: true}}/>
-                        ))}
-                    </div> : <div style={{
-                        marginTop: '40px',
-                        width: "600px",
-                        height: "400px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontSize: "20px"
-                    }}>There are no such abonnements</div>
-                    }
+                    {showAbonnementsList ? (
+                        <div style={{marginTop: '40px', height: '400px', overflowY: 'scroll'}}>
+                            {searchedAbonnements.map(abonnement => (
+                                <AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
+                                                buyButton={{buttonState: true}}/>
+                            ))}
+                        </div>
+                    ) : (
+                        <div style={{
+                            marginTop: '40px',
+                            width: "600px",
+                            height: "400px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: "20px"
+                        }}>
+                            There are no such abonnements
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
