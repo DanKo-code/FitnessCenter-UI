@@ -5,6 +5,7 @@ import axios from 'axios';
 import {useDispatch, useSelector} from "react-redux";
 import sad_doing_abonnements_card from "../../../../images/sad_doing_abonnements_card.jpg";
 import {useNavigate} from "react-router-dom";
+import noAva from "../../../../images/no_ava.png"
 
 
 
@@ -39,7 +40,7 @@ export default function CoachCard(props) {
                 <div style={{display: 'flex', justifyContent: 'center', paddingBottom: '20px'}}>
                     <div style={{width: imageSize ? imageSize : '320px', paddingRight: '20px'}}>
                         {/*{abonnement.Photo}*/}
-                        <img style={{width: '100%', height: 'auto'}} src={coach.coach.photo}/>
+                        <img style={{width: '100%', height: 'auto'}} src={coach.coach.photo || noAva}/>
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
@@ -74,7 +75,7 @@ export default function CoachCard(props) {
                         <div style={{marginRight: '10px'}}>
                             <div style={{width: '80px', height: '60px'}}>
                                 <img style={{width: '100%', height: 'auto'}}
-                                     src={Service.photo}/>
+                                     src={Service.photo || noAva}/>
                             </div>
                             <div>{Service.title}</div>
                         </div>

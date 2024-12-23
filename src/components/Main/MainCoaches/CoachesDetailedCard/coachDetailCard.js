@@ -238,7 +238,7 @@ export default function CoachDetailsCard(props) {
                         <div style={{ marginRight: '10px' }}>
                             <div style={{ width: '100px' }}>
                                 {/* {abonnement.Photo} */}
-                                <img style={{ width: '100%', height: 'auto' }} src={comment.userObject.name.photo || noAva} />
+                                <img style={{ width: '100%', height: 'auto' }} src={comment.userObject.photo || noAva} />
                             </div>
                             <div style={{ display: 'flex', gap: '4px' }}>
                                 <div>{comment.userObject.name}</div>

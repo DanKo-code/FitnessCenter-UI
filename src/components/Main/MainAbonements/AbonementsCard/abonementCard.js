@@ -14,6 +14,7 @@ import {setUser} from "../../../../states/storeSlice/appStateSlice";
 import showSuccessMessage from "../../../../utils/showSuccessMessage";
 import ShowErrorMessage from "../../../../utils/showErrorMessage";
 import { useStripe } from "@stripe/react-stripe-js";
+import noAva from "../../../../images/no_ava.png"
 
 export default function AbonnementCard(props) {
 
@@ -159,7 +160,7 @@ export default function AbonnementCard(props) {
                         <div style={{marginRight: '10px'}}>
                             <div style={{width: '80px', height: '60px'}}>
                                 <img style={{width: '100%', height: 'auto'}}
-                                     src={sad_doing_abonnements_card}/>
+                                     src={Service.photo || noAva}/>
                             </div>
                             <div>{Service.title}</div>
                         </div>
