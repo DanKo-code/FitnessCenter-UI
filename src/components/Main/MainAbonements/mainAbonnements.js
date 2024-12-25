@@ -28,9 +28,13 @@ export default function MainAbonnements() {
 
                     const sortPrices = abonements.map(abonement => abonement.abonement.price).sort((a, b) => a - b);
 
-                    setMaxAbonementPrice(sortPrices[sortPrices.length - 1] + 100);
-                    setMinAbonementPrice(sortPrices[0]);
-                    setPriceRange([0, sortPrices[sortPrices.length - 1] + 100]);
+                    console.log('sortPrices: ' + JSON.stringify(sortPrices, null, 2));
+
+                    setMaxAbonementPrice(sortPrices[sortPrices.length - 1])
+                    setMinAbonementPrice(sortPrices[0])
+
+                    setPriceRange([sortPrices[0], sortPrices[sortPrices.length - 1]])
+
 
                     setSearchedAbonnements(sortAbonnements(abonements, sortOrder));
                 }
@@ -44,11 +48,7 @@ export default function MainAbonnements() {
     const handleTitleSearchChange = (event) => {
         setTitleSearch(event.target.value);
 
-        const filtered = abonnements.filter(abonnement =>
-            abonnement.abonement.title.toLowerCase().includes(event.target.value.toLowerCase()) &&
-            abonnement.abonement.price >= priceRange[0] &&
-            abonnement.abonement.price <= priceRange[1]
-        );
+        const filtered = filterData(abonnements, event.target.value, priceRange[0], priceRange[1])
 
         setSearchedAbonnements(sortAbonnements(filtered, sortOrder));
     };
@@ -56,10 +56,7 @@ export default function MainAbonnements() {
     const handlePriceRangeChange = (event, newValue) => {
         setPriceRange(newValue);
 
-        const filtered = abonnements.filter(abonnement =>
-            abonnement.abonement.price >= newValue[0] &&
-            abonnement.abonement.price <= newValue[1]
-        );
+        const filtered = filterData(abonnements, titleSearch, priceRange[0], priceRange[1])
 
         setSearchedAbonnements(sortAbonnements(filtered, sortOrder));
     };
@@ -76,6 +73,19 @@ export default function MainAbonnements() {
                 : b.abonement.price - a.abonement.price;
         });
     };
+
+    function filterData(data, searchName, minPrice, maxPrice) {
+        return data.filter(item => {
+            const matchesName = searchName
+                ? item.abonement.title.toLowerCase().includes(searchName.toLowerCase())
+                : true;
+
+            const matchesPrice = (minPrice === undefined || item.abonement.price >= minPrice) &&
+                (maxPrice === undefined || item.abonement.price <= maxPrice);
+
+            return matchesName && matchesPrice;
+        });
+    }
 
     useEffect(() => {
         if (searchedAbonnements.length === 0) {
@@ -106,7 +116,7 @@ export default function MainAbonnements() {
                             value={priceRange}
                             onChange={handlePriceRangeChange}
                             valueLabelDisplay="auto"
-                            min={0}
+                            min={minAbonementPrice}
                             max={maxAbonementPrice}
                         />
                     </div>
