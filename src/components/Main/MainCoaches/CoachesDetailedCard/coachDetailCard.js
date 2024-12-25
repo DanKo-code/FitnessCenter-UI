@@ -197,6 +197,7 @@ export default function CoachDetailsCard(props) {
                     </div>
 
 
+                    { currentUser.role === "client" && (
                     <Button
                         style={{
                             marginTop: '20px',
@@ -210,7 +211,8 @@ export default function CoachDetailsCard(props) {
                         onClick={handleOpenModal}
                     >
                         leave a review
-                    </Button>
+                    </Button>)
+                    }
                 </div>
 
 
