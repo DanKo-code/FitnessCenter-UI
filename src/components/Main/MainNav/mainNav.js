@@ -94,7 +94,7 @@ export default function MainNav() {
                             Couches
                         </Button>
 
-                        <Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
+                        { user.role === "client" && (<Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
                                 startIcon={< ManageAccountsIcon sx={{width: 50, height: 50}}/>}
                                 sx={{
                                     justifyContent: 'flex-start', // Выравнивание контента по левому краю
@@ -104,7 +104,8 @@ export default function MainNav() {
                                 onClick={()=>{navigate('/main/profile')}}>
 
                             Edit Profile
-                        </Button>
+                        </Button>)
+                        }
 
                         { user.role === "admin" && (
                             <Button style={{color: 'white', background: 'rgba(117,100,163,255)', height: '62px', marginTop: '5%'}}
