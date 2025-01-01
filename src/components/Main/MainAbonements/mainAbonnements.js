@@ -58,7 +58,7 @@ export default function MainAbonnements() {
     const handlePriceRangeChange = (event, newValue) => {
         setPriceRange(newValue);
 
-        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, priceRange[0], priceRange[1])
+        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, newValue[0], newValue[1])
 
         setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
     };

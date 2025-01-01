@@ -79,7 +79,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/abonnements')}}
                                 >
-                            Abonnements
+                            Abonements
                         </Button>
 
                         <Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
@@ -91,7 +91,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/coaches')}}
                                 >
-                            Couches
+                            Coaches
                         </Button>
 
                         { user.role === "client" && (<Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
