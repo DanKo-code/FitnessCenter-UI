@@ -379,7 +379,7 @@ export default function AbonnementsModal({onClose}) {
 
 
                     <FormControl fullWidth style={{marginBottom: '10px'}}>
-                        <InputLabel>Validity Period</InputLabel>
+                        <InputLabel>Validity Period In Months</InputLabel>
                         <Select
 
                             value={validityPeriod}
@@ -407,11 +407,11 @@ export default function AbonnementsModal({onClose}) {
                     </FormControl>
 
                     <FormControl fullWidth style={{marginBottom: '10px'}}>
-                        <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-amount">Price(in dollars)</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-amount"
                             startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                            label="Amount"
+                            label="Price"
                             value={price}
                             onChange={handlePriceChange}
                         />

@@ -99,7 +99,7 @@ export default function AbonnementCard(props) {
                         alignItems: 'center'
                     }}>
                         <AccessTimeIcon fontSize="large" style={{marginRight: '10px'}}/>
-                        <div style={{fontSize: '14px'}}>Validity Period:</div>
+                        <div style={{fontSize: '14px'}}>Validity Period(in months):</div>
                         <div style={{marginLeft: '5px', marginRight: '5px', fontSize: '14px'}}>
                             {abonnement.abonement.validity}
                         </div>
@@ -129,7 +129,7 @@ export default function AbonnementCard(props) {
                         alignItems: 'center'
                     }}>
                         <LocalAtmIcon fontSize="large" style={{marginRight: '10px'}}/>
-                        <div style={{fontSize: '14px'}}>Price:</div>
+                        <div style={{fontSize: '14px'}}>Price(in dollars):</div>
                         <div style={{
                             fontSize: '14px',
                             marginLeft: '5px',
