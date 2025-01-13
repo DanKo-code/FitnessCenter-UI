@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import AbonnementCard from "./AbonementsCard/abonementCard";
 import showErrorMessage from "../../../utils/showErrorMessage";
 import {Resource} from "../../../context/AuthContext";
+import {useSelector} from "react-redux";
 
 
 export default function MainAbonnements() {
@@ -19,6 +20,9 @@ export default function MainAbonnements() {
     const [priceRange, setPriceRange] = useState([0, 0]);
     const [sortOrder, setSortOrder] = useState("asc");
     const [sortFilter, setSortFilter] = useState("title");
+    const [orders, setOrders] = useState([]);
+
+    let user = useSelector((state) => state.userSliceMode.user);
 
     useEffect(() => {
         Resource.get('/abonements')
@@ -40,10 +44,15 @@ export default function MainAbonnements() {
 
                     setSearchedAbonnements(sortAbonnements(abonements, sortFilter, sortOrder));
                 }
+
+                return Resource.get('/orders/'+user.id)
+            })
+            .then(response => {
+                setOrders(response.data.orders)
             })
             .catch(error => {
                 showErrorMessage(error);
-                console.error('Failed to fetch abonnements:', error);
+                console.error('Failed to fetch data:', error);
             });
     }, []);
 
@@ -221,7 +230,7 @@ export default function MainAbonnements() {
                         <div style={{marginTop: '40px', height: '400px', overflowY: 'scroll'}}>
                             {searchedAbonnements.map(abonnement => (
                                 <AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
-                                                buyButton={{buttonState: true}}/>
+                                                buyButton={!orders?.some(order => abonnement?.abonement?.id === order?.orderObject?.abonement_id && order?.orderObject?.status === "Valid")}/>
                             ))}
                         </div>
                     ) : (
