@@ -1,17 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {FormControl, InputLabel, MenuItem, Select, Slider} from "@mui/material";
+import {FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select, Slider} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import AbonnementCard from "./AbonementsCard/abonementCard";
 import showErrorMessage from "../../../utils/showErrorMessage";
 import {Resource} from "../../../context/AuthContext";
 import {useSelector} from "react-redux";
+import {Checkbox} from "@mui/joy";
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 export default function MainAbonnements() {
 
     const [age, setAge] = useState('');
     const [titleSearch, setTitleSearch] = useState('');
-    const [validityPeriodSearch, setValidityPeriodSearch] = useState('');
+    const [validityPeriodSearch, setValidityPeriodSearch] = useState('Any');
     const [abonnements, setAbonnements] = useState([]);
     const [searchedAbonnements, setSearchedAbonnements] = useState([]);
     const [showAbonnementsList, setShowAbonnementsList] = useState(true);
@@ -21,6 +32,9 @@ export default function MainAbonnements() {
     const [sortOrder, setSortOrder] = useState("asc");
     const [sortFilter, setSortFilter] = useState("title");
     const [orders, setOrders] = useState([]);
+    const [visitingTime, setVisitingTime] = useState('Any');
+    const [allServices, setAllServices] = useState([]);
+    const [currentServices, setCurrentServices] = useState([]);
 
     let user = useSelector((state) => state.userSliceMode.user);
 
@@ -42,6 +56,7 @@ export default function MainAbonnements() {
                     setPriceRange([sortPrices[0], sortPrices[sortPrices.length - 1]])
 
 
+                    filterData(abonnements, '', '', '', sortPrices[0], [], sortPrices[sortPrices.length - 1])
                     setSearchedAbonnements(sortAbonnements(abonements, sortFilter, sortOrder));
                 }
 
@@ -49,6 +64,13 @@ export default function MainAbonnements() {
             })
             .then(response => {
                 setOrders(response.data.orders)
+
+                return Resource.get('/services')
+            })
+            .then(response => {
+                if(response.data.services.serviceObject.length > 0){
+                    setAllServices(response.data.services.serviceObject);
+                }
             })
             .catch(error => {
                 showErrorMessage(error);
@@ -59,7 +81,7 @@ export default function MainAbonnements() {
     const handleTitleSearchChange = (event) => {
         setTitleSearch(event.target.value);
 
-        const filtered = filterData(abonnements, event.target.value, validityPeriodSearch, priceRange[0], priceRange[1])
+        const filtered = filterData(abonnements, event.target.value, validityPeriodSearch, visitingTime, currentServices, priceRange[0], priceRange[1])
 
         setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
     };
@@ -67,7 +89,7 @@ export default function MainAbonnements() {
     const handlePriceRangeChange = (event, newValue) => {
         setPriceRange(newValue);
 
-        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, newValue[0], newValue[1])
+        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, visitingTime, currentServices, newValue[0], newValue[1])
 
         setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
     };
@@ -100,20 +122,32 @@ export default function MainAbonnements() {
         });
     };
 
-    function filterData(data, searchName, validityPeriod, minPrice, maxPrice) {
+    function filterData(data, searchName, validityPeriod, visitingTime, currentServices, minPrice, maxPrice) {
         return data.filter(item => {
             const matchesName = searchName
                 ? item.abonement.title.toLowerCase().includes(searchName.toLowerCase())
                 : true;
 
-            const matchesValidityPeriod = validityPeriod
+            let matchesValidityPeriod = validityPeriod
                 ? item.abonement.validity.includes(validityPeriod)
                 : true;
+            if (validityPeriod === 'Any') {
+                matchesValidityPeriod = true
+            }
+
+            let matchesVisitingTime = visitingTime
+                ? item.abonement.visiting_time.includes(visitingTime)
+                : true
+            if (visitingTime === 'Any') {
+                matchesVisitingTime = true
+            }
 
             const matchesPrice = (minPrice === undefined || item.abonement.price >= minPrice) &&
                 (maxPrice === undefined || item.abonement.price <= maxPrice);
 
-            return matchesName && matchesPrice && matchesValidityPeriod;
+            const containsAllValues = currentServices.map(column => column.title).every(value => item.services.map(column => column.title).includes(value));
+
+            return matchesName && matchesPrice && matchesValidityPeriod && matchesVisitingTime && containsAllValues;
         });
     }
 
@@ -128,24 +162,49 @@ export default function MainAbonnements() {
     function handleValidityPeriodChange(event) {
         const value = event.target.value;
 
-        if (/^\d*$/.test(value)) {
-            const numericValue = parseInt(value, 10);
-            if ((numericValue >= 1 && numericValue <= 12) || value === "") {
-                setValidityPeriodSearch(value);
+        setValidityPeriodSearch(value);
 
-                const filtered = filterData(abonnements, titleSearch, event.target.value, priceRange[0], priceRange[1])
-                setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-            } else {
-                setValidityPeriodSearch(validityPeriodSearch)
-                const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, priceRange[0], priceRange[1])
-                setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-            }
+        if (value === "Any"){
+            const filtered = filterData(abonnements, titleSearch, '', visitingTime, currentServices, priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
+        } else {
+            const filtered = filterData(abonnements, titleSearch, value, visitingTime, currentServices, priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
         }
     }
 
     function handleSortFilterChange(event) {
         setSortFilter(event.target.value);
         setSearchedAbonnements(sortAbonnements(searchedAbonnements, event.target.value, sortOrder));
+    }
+
+    const handleVisitingTimeChange = async (event) => {
+        const value = event.target.value;
+
+        setVisitingTime(value);
+
+        if (value === "Any"){
+            const filtered = filterData(abonnements, titleSearch, '', "", currentServices, priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
+        } else {
+            const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, value, currentServices, priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
+        }
+    }
+
+    const handleServicesChange = async (service) => {
+        if (currentServices.map(serviceObg => serviceObg.id).includes(service.id)) {
+            const updatedServices = currentServices.filter(serviceObj => serviceObj.id !== service.id);
+            setCurrentServices(updatedServices);
+
+            const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, visitingTime, updatedServices, priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
+        } else {
+            setCurrentServices([service, ...currentServices]);
+
+            const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, visitingTime, [service, ...currentServices], priceRange[0], priceRange[1])
+            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
+        }
     }
 
     return (
@@ -200,16 +259,35 @@ export default function MainAbonnements() {
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px'}}>
-                    <TextField
-                        style={{width: '30%'}}
-                        fullWidth
-                        id="search"
-                        label="Validity Period Search"
-                        name="search"
-                        autoComplete="search"
-                        value={validityPeriodSearch}
-                        onChange={handleValidityPeriodChange}>
-                    </TextField>
+                    <FormControl fullWidth style={{width: '30%'}}>
+                        <InputLabel id="validity-period-label">Validity Period In Months</InputLabel>
+                        <Select
+                            id="validity-period-label"
+                            value={validityPeriodSearch}
+                            label="Validity Period"
+                            onChange={handleValidityPeriodChange}
+                        >
+                            <MenuItem value={'1'}>1</MenuItem>
+                            <MenuItem value={'3'}>3</MenuItem>
+                            <MenuItem value={'6'}>6</MenuItem>
+                            <MenuItem value={'12'}>12</MenuItem>
+                            <MenuItem value={'Any'}>Any</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth style={{width: '30%'}}>
+                        <InputLabel>Visiting Time</InputLabel>
+                        <Select
+                            value={visitingTime}
+                            label="Visiting Time"
+                            onChange={handleVisitingTimeChange}
+                        >
+                            <MenuItem value={'7.00 - 14.00'}>7.00 - 14.00</MenuItem>
+                            <MenuItem value={'14.00 - 24.00'}>14.00 - 24.00</MenuItem>
+                            <MenuItem value={'Any Time'}>Any Time</MenuItem>
+                            <MenuItem value={'Any'}>Any</MenuItem>
+                        </Select>
+                    </FormControl>
 
                     <FormControl style={{width: '30%'}}>
                         <InputLabel id="sort-order-label">Sorting Order</InputLabel>
@@ -221,6 +299,28 @@ export default function MainAbonnements() {
                         >
                             <MenuItem value="asc">Ascending</MenuItem>
                             <MenuItem value="desc">Descending</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px'}}>
+                    <FormControl fullWidth>
+                        <InputLabel fullWidth>Services</InputLabel>
+                        <Select
+                            fullWidth
+                            multiple
+                            value={currentServices}
+                            input={<OutlinedInput label="Tag"/>}
+                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
+                            MenuProps={MenuProps}
+                        >
+                            {allServices.map((service) => (
+                                <MenuItem key={service.id} value={service.title}>
+                                    <Checkbox onChange={() => handleServicesChange(service)}
+                                              checked={currentServices.map(ser => ser.id).includes(service.id)}/>
+                                    <ListItemText primary={service.title}/>
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </div>
