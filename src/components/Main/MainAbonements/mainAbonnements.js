@@ -56,7 +56,7 @@ export default function MainAbonnements() {
                     setPriceRange([sortPrices[0], sortPrices[sortPrices.length - 1]])
 
 
-                    filterData(abonnements, '', '', '', sortPrices[0], [], sortPrices[sortPrices.length - 1])
+                    filterData(abonnements, '', 'Any', 'Any', sortPrices[0], [], sortPrices[sortPrices.length - 1])
                     setSearchedAbonnements(sortAbonnements(abonements, sortFilter, sortOrder));
                 }
 
@@ -129,14 +129,14 @@ export default function MainAbonnements() {
                 : true;
 
             let matchesValidityPeriod = validityPeriod
-                ? item.abonement.validity.includes(validityPeriod)
+                ? item.abonement.validity === validityPeriod
                 : true;
             if (validityPeriod === 'Any') {
                 matchesValidityPeriod = true
             }
 
             let matchesVisitingTime = visitingTime
-                ? item.abonement.visiting_time.includes(visitingTime)
+                ? item.abonement.visiting_time === visitingTime
                 : true
             if (visitingTime === 'Any') {
                 matchesVisitingTime = true
@@ -164,13 +164,8 @@ export default function MainAbonnements() {
 
         setValidityPeriodSearch(value);
 
-        if (value === "Any"){
-            const filtered = filterData(abonnements, titleSearch, '', visitingTime, currentServices, priceRange[0], priceRange[1])
-            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-        } else {
-            const filtered = filterData(abonnements, titleSearch, value, visitingTime, currentServices, priceRange[0], priceRange[1])
-            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-        }
+        const filtered = filterData(abonnements, titleSearch, value, visitingTime, currentServices, priceRange[0], priceRange[1])
+        setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
     }
 
     function handleSortFilterChange(event) {
@@ -183,13 +178,8 @@ export default function MainAbonnements() {
 
         setVisitingTime(value);
 
-        if (value === "Any"){
-            const filtered = filterData(abonnements, titleSearch, '', "", currentServices, priceRange[0], priceRange[1])
-            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-        } else {
-            const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, value, currentServices, priceRange[0], priceRange[1])
-            setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
-        }
+        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, value, currentServices, priceRange[0], priceRange[1])
+        setSearchedAbonnements(sortAbonnements(filtered, sortFilter, sortOrder));
     }
 
     const handleServicesChange = async (service) => {

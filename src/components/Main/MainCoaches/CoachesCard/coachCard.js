@@ -38,9 +38,9 @@ export default function CoachCard(props) {
                 </div>*/}
 
                 <div style={{display: 'flex', justifyContent: 'center', paddingBottom: '20px'}}>
-                    <div style={{width: imageSize ? imageSize : '320px', paddingRight: '20px'}}>
+                    <div style={{width: '200px', paddingRight: '20px'}}>
                         {/*{abonnement.Photo}*/}
-                        <img style={{width: '100%', height: 'auto'}} src={coach.coach.photo || noAva}/>
+                        <img style={{width: '100%', height: '150px'}} src={coach.coach.photo || noAva}/>
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
