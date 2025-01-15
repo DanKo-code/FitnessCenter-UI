@@ -97,6 +97,8 @@ export default function AbonnementsModal({onClose}) {
 
     const handleAbonementSelection = async (selectedAbonnement) => {
 
+        setSelectedFile(null)
+
         if (currentAbonnement?.abonement?.id === selectedAbonnement.abonement.id) {
             setCurrentAbonnement('');
         } else {
@@ -317,7 +319,9 @@ export default function AbonnementsModal({onClose}) {
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {abonnements?.length > 0 ? <div>
-                            {abonnements.map(abonnement => (
+                            {abonnements
+                                .sort((a, b) => new Date(b.abonement.updated_time) - new Date(a.abonement.updated_time))
+                                .map(abonnement => (
                                 <div key={abonnement.abonement.id}>
                                     <div
                                         style={{border: currentAbonnement === abonnement ? '3px solid yellow' : 'none'}}>

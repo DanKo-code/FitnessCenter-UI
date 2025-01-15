@@ -112,6 +112,8 @@ export default function CoachesModal({onClose}) {
 
     const handleCoachSelection = async (selectedCoach) => {
 
+        setSelectedFile(null)
+
         if (currentCoach?.coach?.id === selectedCoach.coach.id) {
             setCurrentCoach('');
         } else {
@@ -299,7 +301,9 @@ export default function CoachesModal({onClose}) {
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {coaches.length > 0 ? <div>
-                            {coaches.map(coach => (
+                            {coaches
+                                .sort((a, b) => new Date(b.coach.updated_time) - new Date(a.coach.updated_time))
+                                .map(coach => (
                                 <div key={coach.coach.id}>
                                     <div
                                         style={{border: currentCoach === coach ? '3px solid yellow' : 'none'}}>
