@@ -60,7 +60,7 @@ export default function CoachCard(props) {
 
                                 onClick={handleDetails}
                             >
-                                Details
+                                Подробности
                             </Button>
                         }
 
@@ -69,7 +69,7 @@ export default function CoachCard(props) {
                 </div>
 
 
-                <div style={{paddingBottom: '15px', fontSize: '18px'}}>Services:</div>
+                <div style={{paddingBottom: '15px', fontSize: '18px'}}>Услуги:</div>
                 <div style={{display: 'flex',}}>
                     {coach.services.map(Service => (
                         <div style={{marginRight: '10px'}}>
@@ -77,7 +77,12 @@ export default function CoachCard(props) {
                                 <img style={{width: '100%', height: 'auto'}}
                                      src={Service.photo || noAva}/>
                             </div>
-                            <div>{Service.title}</div>
+                            <div>{
+                                Service.title === "swimming-pool" ? "Бассейн" :
+                                Service.title === "sauna" ? "Сауна" :
+                                Service.title === "gym" ? "Тренажерный зал" :
+                                Service.title
+                            }</div>
                         </div>
                     ))}
                 </div>

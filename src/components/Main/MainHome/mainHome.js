@@ -55,9 +55,9 @@ export default function MainHome() {
             </div>
             <div style={{height: '100vh', marginRight: '5%', marginLeft: '5%'}}>
                 <div style={{marginTop: '50px'}}>
-                    Welcome to the wonderful Fitness Center app, where you can
-                    purchase subscriptions, view trainers and leave feedback for them,
-                    edit your profile and view your purchase historyx
+                    Добро пожаловать в приложение FitLab для фитнес-центра, где вы можете
+                    приобрести абонементы, просматривать тренеров и оставлять отзывы о них,
+                    редактировать свой профиль и просматривать историю покупок.
                 </div>
                 <div>
                     <div style={{marginTop: '100px'}}>

@@ -40,7 +40,7 @@ export default function ClientsModal({onClose}) {
                 if (response.status === 200) {
                     setClients(clients.filter(item => item.id !== response.data.client.id))
 
-                    ShowSuccessMessage("Client deleted successfully")
+                    ShowSuccessMessage("Клиент успешно удален")
                 }
 
             }
@@ -109,7 +109,7 @@ export default function ClientsModal({onClose}) {
                 justifyContent: "center",
                 fontWeight: "bold",
                 fontSize: "24px"
-            }}>All Clients</div>
+            }}>Все Клиенты</div>
 
                 <div style={{marginTop:"20px", height: "400px", position: "relative"}}>
                     {/* Заголовки колонок */}
@@ -124,11 +124,11 @@ export default function ClientsModal({onClose}) {
                             gap: "20px",
                         }}
                     >
-                        <div style={{width: "200px", textAlign: "center"}}>Photo</div>
+                        <div style={{width: "200px", textAlign: "center"}}>Фото</div>
                         <div style={{flex: 1}}>Email</div>
-                        <div style={{flex: 1}}>Name</div>
-                        <div style={{flex: 1}}>Created Time</div>
-                        <div style={{flex: 1}}>Updated Time</div>
+                        <div style={{flex: 1}}>Имя</div>
+                        <div style={{flex: 1}}>Время Создания</div>
+                        <div style={{flex: 1}}>Время Обновления</div>
                     </div>
 
                     {/* Список клиентов */}

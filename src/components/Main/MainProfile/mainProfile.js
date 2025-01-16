@@ -84,7 +84,7 @@ export default function MainProfile() {
                 const newUser = response.data.user
 
                 dispatch(setUser(newUser));
-                ShowSuccessMessage('User updated successfully')
+                ShowSuccessMessage('Клиент успешно обновлен')
             }
         } catch (error) {
             if(error?.response?.data?.error) {
@@ -144,7 +144,7 @@ export default function MainProfile() {
                     </div>
                     <TextField style={{marginBottom: '20px'}}
                                fullWidth
-                               label="Name"
+                               label="Имя"
                                value={name}
                                onChange={handleNameChange}
                     />
@@ -168,7 +168,7 @@ export default function MainProfile() {
                         justifyContent: 'center',
                         marginBottom: '20px',
                         fontSize: '24px'
-                    }}>Purchased Abonements
+                    }}>Приобретенные абоненты
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {orders ? <div>
@@ -180,7 +180,7 @@ export default function MainProfile() {
                                     }
                                 } status={order.orderObject.status}/>
                             ))}
-                        </div> : <div>There are no orders</div>}
+                        </div> : <div>Нет никакаих заказов</div>}
                     </div>
                 </div>
 

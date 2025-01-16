@@ -179,7 +179,7 @@ export default function AbonnementsModal({onClose}) {
                     setCurrentServices([]);
                     setCurrentAbonnement('');
 
-                    ShowSuccessMessage("Abonement deleted successfully")
+                    ShowSuccessMessage("Абонемент успешно удален")
                 }
 
             }
@@ -226,7 +226,7 @@ export default function AbonnementsModal({onClose}) {
                     });
 
                     setAbonnements(newArray);
-                    ShowSuccessMessage("Abonement updated successfully")
+                    ShowSuccessMessage("Абонемент успешно обновлен")
                 }
 
             } catch (error) {
@@ -267,7 +267,7 @@ export default function AbonnementsModal({onClose}) {
 
                     setAbonnements([abonementWithServices, ...abonnements]);
                     setCurrentAbonnement(abonementWithServices);
-                    ShowSuccessMessage("Abonement created successfully")
+                    ShowSuccessMessage("Абонемент успешно создан")
                 }
 
             } catch (error) {
@@ -284,6 +284,12 @@ export default function AbonnementsModal({onClose}) {
 
 
     }
+
+    const translations = {
+        "swimming-pool": "Бассейн",
+        "sauna": "Сауна",
+        "gym": "Тренажерный зал"
+    };
 
     return (
         <div
@@ -315,7 +321,7 @@ export default function AbonnementsModal({onClose}) {
                         marginBottom: '10px',
                         fontSize: '18px'
                     }}>
-                        All Abonnements
+                        Все Абонементы
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {abonnements?.length > 0 ? <div>
@@ -332,7 +338,7 @@ export default function AbonnementsModal({onClose}) {
                                     </div>
                                 </div>
                             ))}
-                        </div> : <div>There are no abonements</div>}
+                        </div> : <div>Нет никаких абонементов</div>}
                     </div>
                 </div>
                 <div style={{width: '60%', height: '100%'}}>
@@ -343,7 +349,7 @@ export default function AbonnementsModal({onClose}) {
                         marginBottom: '10px',
                         fontSize: '18px'
                     }}>
-                        {currentAbonnement ? 'Edit Abonnement' : 'Create Abonnement'}
+                        {currentAbonnement ? 'Редактировать Абонемент' : 'Создать Абонемент'}
                     </div>
 
                     <input
@@ -375,7 +381,7 @@ export default function AbonnementsModal({onClose}) {
 
                         <TextField style={{marginBottom: '10px'}}
                                    fullWidth
-                                   label="Title"
+                                   label="Название"
                                    value={title}
                                    onChange={handleTitleChange}
                         />
@@ -383,7 +389,7 @@ export default function AbonnementsModal({onClose}) {
 
 
                     <FormControl fullWidth style={{marginBottom: '10px'}}>
-                        <InputLabel>Validity Period In Months</InputLabel>
+                        <InputLabel>Период Валидности в Месяцах</InputLabel>
                         <Select
 
                             value={validityPeriod}
@@ -398,7 +404,7 @@ export default function AbonnementsModal({onClose}) {
                     </FormControl>
 
                     <FormControl fullWidth style={{marginBottom: '10px'}}>
-                        <InputLabel>Visiting Time</InputLabel>
+                        <InputLabel>Время Посещения</InputLabel>
                         <Select
                             value={visitingTime}
                             label="Visiting Time"
@@ -406,15 +412,15 @@ export default function AbonnementsModal({onClose}) {
                         >
                             <MenuItem value={'7.00 - 14.00'}>7.00 - 14.00</MenuItem>
                             <MenuItem value={'14.00 - 24.00'}>14.00 - 24.00</MenuItem>
-                            <MenuItem value={'Any Time'}>Any Time</MenuItem>
+                            <MenuItem value={'Any Time'}>Любое время</MenuItem>
                         </Select>
                     </FormControl>
 
                     <FormControl fullWidth style={{marginBottom: '10px'}}>
-                        <InputLabel htmlFor="outlined-adornment-amount">Price(in dollars)</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-amount">Цена(BYN)</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-amount"
-                            startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                            startAdornment={<InputAdornment position="start">BYN</InputAdornment>}
                             label="Price"
                             value={price}
                             onChange={handlePriceChange}
@@ -422,20 +428,27 @@ export default function AbonnementsModal({onClose}) {
                     </FormControl>
 
                     <FormControl fullWidth>
-                        <InputLabel fullWidth>Services</InputLabel>
+                        <InputLabel fullWidth>Услуги</InputLabel>
                         <Select
                             fullWidth
                             multiple
                             value={currentServices}
                             input={<OutlinedInput label="Tag"/>}
-                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
+                            renderValue={(selected) =>
+                                selected.map(sel => (translations[sel.title] || sel.title) + ' ')
+                            }
                             MenuProps={MenuProps}
                         >
                             {allServices.map((service) => (
                                 <MenuItem key={service.id} value={service.title}>
                                     <Checkbox onChange={() => handleServicesChange(service)}
                                               checked={currentServices.map(ser => ser.id).includes(service.id)}/>
-                                    <ListItemText primary={service.title}/>
+                                    <ListItemText primary={
+                                        service.title === "swimming-pool" ? "Бассейн" :
+                                        service.title === "sauna" ? "Сауна" :
+                                        service.title === "gym" ? "Тренажерный зал" :
+                                        service.title
+                                    }/>
                                 </MenuItem>
                             ))}
                         </Select>

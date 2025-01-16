@@ -197,6 +197,12 @@ export default function MainAbonnements() {
         }
     }
 
+    const translations = {
+        "swimming-pool": "Бассейн",
+        "sauna": "Сауна",
+        "gym": "Тренажерный зал"
+    };
+
     return (
         <div style={{
             width: '70%',
@@ -215,7 +221,7 @@ export default function MainAbonnements() {
                         style={{width: '30%'}}
                         fullWidth
                         id="search"
-                        label="Name Search"
+                        label="Поиск по имени"
                         name="search"
                         autoComplete="search"
                         value={titleSearch}
@@ -223,7 +229,7 @@ export default function MainAbonnements() {
                     </TextField>
 
                     <div style={{width: '30%'}}>
-                        <div style={{textAlign: 'center'}}>Price:</div>
+                        <div style={{textAlign: 'center'}}>Цена:</div>
                         <Slider
                             aria-labelledby="range-slider"
                             value={priceRange}
@@ -235,22 +241,22 @@ export default function MainAbonnements() {
                     </div>
 
                     <FormControl style={{width: '30%'}}>
-                        <InputLabel id="sort-order-label">Sorting filter</InputLabel>
+                        <InputLabel id="sort-order-label">Фильтр сортировки</InputLabel>
                         <Select
                             labelId="sort-order-label"
                             id="sort-order"
                             value={sortFilter}
                             onChange={handleSortFilterChange}
                         >
-                            <MenuItem value="title">Title</MenuItem>
-                            <MenuItem value="price">Price</MenuItem>
+                            <MenuItem value="title">Название</MenuItem>
+                            <MenuItem value="price">Цена</MenuItem>
                         </Select>
                     </FormControl>
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px'}}>
-                    <FormControl fullWidth style={{width: '30%'}}>
-                        <InputLabel id="validity-period-label">Validity Period In Months</InputLabel>
+                    <FormControl fullWidth style={{width: '33%'}}>
+                        <InputLabel id="validity-period-label">Период валидности в месяцах</InputLabel>
                         <Select
                             id="validity-period-label"
                             value={validityPeriodSearch}
@@ -261,12 +267,12 @@ export default function MainAbonnements() {
                             <MenuItem value={'3'}>3</MenuItem>
                             <MenuItem value={'6'}>6</MenuItem>
                             <MenuItem value={'12'}>12</MenuItem>
-                            <MenuItem value={'Any'}>Any</MenuItem>
+                            <MenuItem value={'Any'}>Любой</MenuItem>
                         </Select>
                     </FormControl>
 
                     <FormControl fullWidth style={{width: '30%'}}>
-                        <InputLabel>Visiting Time</InputLabel>
+                        <InputLabel>Время посещения</InputLabel>
                         <Select
                             value={visitingTime}
                             label="Visiting Time"
@@ -274,41 +280,50 @@ export default function MainAbonnements() {
                         >
                             <MenuItem value={'7.00 - 14.00'}>7.00 - 14.00</MenuItem>
                             <MenuItem value={'14.00 - 24.00'}>14.00 - 24.00</MenuItem>
-                            <MenuItem value={'Any Time'}>Any Time</MenuItem>
-                            <MenuItem value={'Any'}>Any</MenuItem>
+                            <MenuItem value={'Any Time'}>Любое время</MenuItem>
+                            <MenuItem value={'Any'}>Любое</MenuItem>
                         </Select>
                     </FormControl>
 
                     <FormControl style={{width: '30%'}}>
-                        <InputLabel id="sort-order-label">Sorting Order</InputLabel>
+                        <InputLabel id="sort-order-label">Порядок сортировки</InputLabel>
                         <Select
                             labelId="sort-order-label"
                             id="sort-order"
                             value={sortOrder}
                             onChange={handleSortOrderChange}
                         >
-                            <MenuItem value="asc">Ascending</MenuItem>
-                            <MenuItem value="desc">Descending</MenuItem>
+                            <MenuItem value="asc">Восходящий</MenuItem>
+                            <MenuItem value="desc">Нисходящий</MenuItem>
                         </Select>
                     </FormControl>
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px'}}>
                     <FormControl fullWidth>
-                        <InputLabel fullWidth>Services</InputLabel>
+                        <InputLabel fullWidth>Услуги</InputLabel>
                         <Select
                             fullWidth
                             multiple
                             value={currentServices}
                             input={<OutlinedInput label="Tag"/>}
-                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
+                            renderValue={(selected) =>
+                                selected.map(sel => (translations[sel.title] || sel.title) + ' ')
+                            }
                             MenuProps={MenuProps}
                         >
                             {allServices.map((service) => (
                                 <MenuItem key={service.id} value={service.title}>
                                     <Checkbox onChange={() => handleServicesChange(service)}
                                               checked={currentServices.map(ser => ser.id).includes(service.id)}/>
-                                    <ListItemText primary={service.title}/>
+                                    <ListItemText
+                                        primary={
+                                            service.title === "swimming-pool" ? "Бассейн" :
+                                                service.title === "sauna" ? "Сауна" :
+                                                    service.title === "gym" ? "Тренажерный зал" :
+                                                        service.title
+                                        }
+                                    />
                                 </MenuItem>
                             ))}
                         </Select>
@@ -333,7 +348,7 @@ export default function MainAbonnements() {
                             alignItems: "center",
                             fontSize: "20px"
                         }}>
-                            There are no such abonnements
+                            Таких абонентов не существует
                         </div>
                     )}
                 </div>

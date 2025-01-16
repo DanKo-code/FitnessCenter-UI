@@ -124,7 +124,7 @@ export default function MainAdminPanel() {
 
                     onClick={handleOpenAbonnementsModal}
                 >
-                    Abonnements
+                    Абонементы
                 </Button>
                 <Button
                     style={{
@@ -138,7 +138,7 @@ export default function MainAdminPanel() {
 
                     onClick={handleOpenCoachesModal}
                 >
-                    Coaches
+                    Тренера
                 </Button>
                 <Button
                     style={{
@@ -152,7 +152,7 @@ export default function MainAdminPanel() {
 
                     onClick={handleOpenClientsModal}
                 >
-                    Clients
+                    Клиенты
                 </Button>
             </div>
 

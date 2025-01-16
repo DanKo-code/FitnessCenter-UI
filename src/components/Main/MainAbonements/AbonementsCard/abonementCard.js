@@ -82,7 +82,7 @@ export default function AbonnementCard(props) {
             marginBottom: '10px',
             position: "relative"
         }}>
-            {status === "Expired" && <div style={styles.overlay}>Expired</div>}
+            {status === "Истекший" && <div style={styles.overlay}>Expired</div>}
 
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <div style={{marginTop: '5px', fontSize: '24px'}}>
@@ -99,7 +99,7 @@ export default function AbonnementCard(props) {
                         alignItems: 'center'
                     }}>
                         <AccessTimeIcon fontSize="large" style={{marginRight: '10px'}}/>
-                        <div style={{fontSize: '14px'}}>Validity Period(in months):</div>
+                        <div style={{fontSize: '14px'}}>Периол валидности(в месяцах):</div>
                         <div style={{marginLeft: '5px', marginRight: '5px', fontSize: '14px'}}>
                             {abonnement.abonement.validity}
                         </div>
@@ -115,9 +115,9 @@ export default function AbonnementCard(props) {
                         alignItems: 'center'
                     }}>
                         <CalendarMonthIcon fontSize="large" style={{marginRight: '10px'}}/>
-                        <div style={{fontSize: '14px'}}>Visiting Time:</div>
+                        <div style={{fontSize: '14px'}}>Время посещения:</div>
                         <div style={{fontSize: '14px', marginLeft: '5px', marginRight: '5px'}}>
-                            {abonnement.abonement.visiting_time}
+                            {abonnement.abonement.visiting_time === "Any Time" ? "Любое Время" : abonnement.abonement.visiting_time}
                         </div>
 
                     </div>
@@ -129,7 +129,7 @@ export default function AbonnementCard(props) {
                         alignItems: 'center'
                     }}>
                         <LocalAtmIcon fontSize="large" style={{marginRight: '10px'}}/>
-                        <div style={{fontSize: '14px'}}>Price(in dollars):</div>
+                        <div style={{fontSize: '14px'}}>Цена(BYN):</div>
                         <div style={{
                             fontSize: '14px',
                             marginLeft: '5px',
@@ -138,14 +138,14 @@ export default function AbonnementCard(props) {
                     </div>
                 </div>
 
-                <div style={{width: '200px', paddingRight: '20px'}}>
+                <div style={{width: '200px', height: '210px', paddingRight: '20px'}}>
                     {/*{abonnement.Photo}*/}
                     <img style={{width: '100%', height: 'auto'}} src={abonnement.abonement.photo}/>
                 </div>
             </div>
 
             <div style={{paddingLeft: '20px'}}>
-                Services:
+                Услуги:
             </div>
             <div style={{
                 paddingLeft: '20px',
@@ -162,7 +162,12 @@ export default function AbonnementCard(props) {
                                 <img style={{width: '100%', height: 'auto'}}
                                      src={Service.photo || noAva}/>
                             </div>
-                            <div>{Service.title}</div>
+                            <div>{
+                                Service.title === "swimming-pool" ? "Бассейн" :
+                                Service.title === "sauna" ? "Сауна" :
+                                Service.title === "gym" ? "Тренажерный зал" :
+                                Service.title
+                            }</div>
                         </div>
                     ))}
                 </div>
@@ -177,7 +182,7 @@ export default function AbonnementCard(props) {
 
                     onClick={handleBuy}
                 >
-                    Buy
+                    Купить
                 </Button> : <div/>}
 
             </div>

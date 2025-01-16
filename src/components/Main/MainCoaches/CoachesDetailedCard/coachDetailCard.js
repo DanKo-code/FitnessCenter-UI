@@ -60,7 +60,7 @@ export default function CoachDetailsCard(props) {
                 console.log('postComments: '+ JSON.stringify(response, null, 2))
 
                 setCoachComments(coachComments => [...coachComments, response.data.reviewWithUser].sort((a, b) => new Date(b.reviewObject.created_time) - new Date(a.reviewObject.created_time)))
-                ShowSuccessMessage('Comment added successfully')
+                ShowSuccessMessage('Комментарий успешно добавлен')
                 setReviewText('');
                 handleCloseModal();
             }
@@ -110,7 +110,7 @@ export default function CoachDetailsCard(props) {
                         width: '300px'
                     }}
                 >
-                    <h2 id="modal-title">Leave a Review</h2>
+                    <h2 id="modal-title">Оставить отзыв</h2>
 
                     <TextareaAutosize
                         style={{
@@ -138,7 +138,7 @@ export default function CoachDetailsCard(props) {
                             }}
                             onClick={handleReviewSubmit}
                         >
-                            Submit
+                            Отправить
                         </Button>
 
                         <Button
@@ -149,7 +149,7 @@ export default function CoachDetailsCard(props) {
                             }}
                             onClick={handleCloseModal}
                         >
-                            Close
+                            Закрыть
                         </Button>
                     </div>
 
@@ -182,7 +182,7 @@ export default function CoachDetailsCard(props) {
                 <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom:"20px"}}>
 
                     <div>
-                        <div style={{paddingBottom: '15px', fontSize: '18px'}}>Services:</div>
+                        <div style={{paddingBottom: '15px', fontSize: '18px'}}>Услуги:</div>
                         <div style={{display: 'flex',}}>
                             {coach.services.map(Service => (
                                 <div style={{marginRight: '10px'}}>
@@ -190,7 +190,12 @@ export default function CoachDetailsCard(props) {
                                         <img style={{width: '100%', height: 'auto'}}
                                              src={Service.photo}/>
                                     </div>
-                                    <div>{Service.title}</div>
+                                    <div>{
+                                        Service.title === "swimming-pool" ? "Бассейн" :
+                                            Service.title === "sauna" ? "Сауна" :
+                                                Service.title === "gym" ? "Тренажерный зал" :
+                                                    Service.title
+                                    }</div>
                                 </div>
                             ))}
                         </div>
@@ -210,14 +215,14 @@ export default function CoachDetailsCard(props) {
 
                         onClick={handleOpenModal}
                     >
-                        leave a review
+                        Оставить отзыв
                     </Button>)
                     }
                 </div>
 
 
                 <div style={{marginTop: '5px', fontSize: '18px'}}>
-                    Comments:
+                    Комментарии:
                 </div>
 
                 <div style={{display: 'flex', justifyContent: 'center', marginTop: '5px', width: '100%'}}>

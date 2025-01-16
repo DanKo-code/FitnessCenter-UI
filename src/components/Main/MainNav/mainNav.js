@@ -67,7 +67,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/home')}}
                                 >
-                            Main
+                            ГЛАВНАЯ
                         </Button>
 
                         <Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
@@ -79,7 +79,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/abonnements')}}
                                 >
-                            Abonements
+                            АБОНЕМЕНТЫ
                         </Button>
 
                         <Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
@@ -91,7 +91,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/coaches')}}
                                 >
-                            Coaches
+                            ТРЕНЕРА
                         </Button>
 
                         { user.role === "client" && (<Button style={{color: 'white', background: 'rgba(117,100,163,255)', marginTop: '5%'}}
@@ -103,7 +103,7 @@ export default function MainNav() {
 
                                 onClick={()=>{navigate('/main/profile')}}>
 
-                            Edit Profile
+                            Профиль
                         </Button>)
                         }
 
@@ -111,7 +111,7 @@ export default function MainNav() {
                             <Button style={{color: 'white', background: 'rgba(117,100,163,255)', height: '62px', marginTop: '5%'}}
                                     onClick={()=>{navigate('/adminPanel')}}>
 
-                                Admin panel
+                                ПАНЕЛЬ АДМИНИСТРАТОРА
                             </Button>
                             )
                         }
@@ -124,7 +124,7 @@ export default function MainNav() {
                                 }}
                                 onClick={handleLogOut}
                                 >
-                            Exit
+                            ВЫХОД
                         </Button>
                     </div>
 

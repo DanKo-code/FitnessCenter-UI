@@ -173,7 +173,7 @@ export default function CoachesModal({onClose}) {
                     setCurrentCoach('');
                     setPhotoUrl('');
 
-                    ShowSuccessMessage("Coach deleted successfully")
+                    ShowSuccessMessage("Тренер успешно удален")
                 }
 
             }
@@ -267,6 +267,12 @@ export default function CoachesModal({onClose}) {
         }
     }
 
+    const translations = {
+        "swimming-pool": "Бассейн",
+        "sauna": "Сауна",
+        "gym": "Тренажерный зал"
+    };
+
     return (
         <div
             style={{
@@ -297,7 +303,7 @@ export default function CoachesModal({onClose}) {
                         marginBottom: '10px',
                         fontSize: '18px'
                     }}>
-                        All Coaches
+                        Все тренера
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {coaches.length > 0 ? <div>
@@ -316,7 +322,7 @@ export default function CoachesModal({onClose}) {
                                     </div>
                                 </div>
                             ))}
-                        </div> : <div>There are no coaches</div>}
+                        </div> : <div>Нет никаких тренеров</div>}
                     </div>
                 </div>
                 <div style={{width: '60%', height: '100%'}}>
@@ -327,7 +333,7 @@ export default function CoachesModal({onClose}) {
                         marginBottom: '10px',
                         fontSize: '18px'
                     }}>
-                        {currentCoach ? 'Edit Coach' : 'Create Coach'}
+                        {currentCoach ? 'Обновить Тренера' : 'Создать Тренера'}
                     </div>
 
                     <div style={{display: 'flex', alignItems: "center", gap: "10px"}}>
@@ -363,7 +369,7 @@ export default function CoachesModal({onClose}) {
 
                         <TextField style={{marginBottom: '10px'}}
                                    fullWidth
-                                   label="Name"
+                                   label="Имя"
                                    value={name}
                                    onChange={handleNameChange}
                         />
@@ -387,20 +393,27 @@ export default function CoachesModal({onClose}) {
                     />
 
                     <FormControl fullWidth>
-                        <InputLabel fullWidth>Services</InputLabel>
+                        <InputLabel fullWidth>Услуги</InputLabel>
                         <Select
                             fullWidth
                             multiple
                             value={currentServices}
                             input={<OutlinedInput label="Tag"/>}
-                            renderValue={(selected) => selected.map(sel => sel.title + ' ')}
+                            renderValue={(selected) =>
+                                selected.map(sel => (translations[sel.title] || sel.title) + ' ')
+                            }
                             MenuProps={MenuProps}
                         >
                             {allServices.map((service) => (
                                 <MenuItem key={service.id} value={service.title}>
                                     <Checkbox onChange={() => handleServicesChange(service)}
                                               checked={currentServices.map(ser => ser.id).includes(service.id)}/>
-                                    <ListItemText primary={service.title}/>
+                                    <ListItemText primary={
+                                        service.title === "swimming-pool" ? "Бассейн" :
+                                            service.title === "sauna" ? "Сауна" :
+                                                service.title === "gym" ? "Тренажерный зал" :
+                                                    service.title
+                                    }/>
                                 </MenuItem>
                             ))}
                         </Select>
@@ -423,7 +436,7 @@ export default function CoachesModal({onClose}) {
 
                                     onClick={handleDelete}
                                 >
-                                    Delete
+                                    Удалить
                                 </Button>
                             </div>
                         )
@@ -444,7 +457,7 @@ export default function CoachesModal({onClose}) {
 
                             onClick={handleSubmit}
                         >
-                            Submit
+                            Подтвердить
                         </Button>
                     </div>
 

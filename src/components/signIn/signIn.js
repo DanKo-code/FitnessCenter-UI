@@ -51,7 +51,7 @@ export default function SignIn() {
 
                 ShowErrorMessage(formattedErrors)
             } else {
-                ShowErrorMessage("Incorrect SignIn Data")
+                ShowErrorMessage("Неверные данные для входа")
             }
 
             console.error('Incorrect SignIn Data: ' + JSON.stringify(error, null, 2))
@@ -82,7 +82,7 @@ export default function SignIn() {
                         </div>
 
                         <h2>
-                            Sign in
+                            Вход
                         </h2>
                     </div>
                 </div>
@@ -100,7 +100,7 @@ export default function SignIn() {
                 }}
                            fullWidth
                            id="email"
-                           label="Email Address"
+                           label="Email Адрес"
                            name="email"
                            autoComplete="email"
                            value={email}
@@ -113,7 +113,7 @@ export default function SignIn() {
                 }}
                            fullWidth
                            name="password"
-                           label="Password"
+                           label="Пароль"
                            type="password"
                            id="password"
                            autoComplete="new-password"
@@ -129,7 +129,7 @@ export default function SignIn() {
                         fullWidth
                         variant="contained"
                 >
-                    Sign In
+                    Вход
                 </Button>
                 <div style={{
                     display: 'flex',
@@ -140,7 +140,7 @@ export default function SignIn() {
                           to={'/signup'}
 
                           >
-                        Don't have an account? Sign up
+                        У вас нет учетной записи? Зарегистрироваться
                     </Link>
                 </div>
             </div>

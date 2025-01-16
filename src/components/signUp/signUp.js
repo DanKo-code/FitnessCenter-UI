@@ -51,7 +51,7 @@ export default function SignUp() {
 
                 ShowErrorMessage(formattedErrors)
             } else {
-                ShowErrorMessage("Incorrect SignUp Data")
+                ShowErrorMessage("Неверные данные для регистрации")
             }
 
             console.error('Incorrect SignUp Data: ' + JSON.stringify(error, null, 2))
@@ -82,7 +82,7 @@ export default function SignUp() {
                         </div>
 
                         <h2>
-                            Sign up
+                            Регистрация
                         </h2>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ export default function SignUp() {
                     <TextField
                         fullWidth
                         id="name"
-                        label="Name"
+                        label="Имя"
                         name="name"
                         autoComplete="family-name"
                         value={name}
@@ -110,7 +110,7 @@ export default function SignUp() {
                 }}
                            fullWidth
                            id="email"
-                           label="Email Address"
+                           label="Email Адрес"
                            name="email"
                            autoComplete="email"
                            value={email}
@@ -123,7 +123,7 @@ export default function SignUp() {
                 }}
                            fullWidth
                            name="password"
-                           label="Password"
+                           label="Пароль"
                            type="password"
                            id="password"
                            autoComplete="new-password"
@@ -139,14 +139,14 @@ export default function SignUp() {
                         fullWidth
                         variant="contained"
                 >
-                    Sign Up
+                    Регистрация
                 </Button>
                 <div style={{
                     display: 'flex',
                     justifyContent: "end"
                 }}>
                     <Link to={'/signin'}>
-                        Already have an account? Sign in
+                        У вас уже есть учетная запись? Вход
                     </Link>
                 </div>
             </div>
