@@ -59,7 +59,7 @@ export default function CoachDetailsCard(props) {
             if(response.status === 200){
                 console.log('postComments: '+ JSON.stringify(response, null, 2))
 
-                setCoachComments(coachComments => [...coachComments, response.data.reviewWithUser].sort((a, b) => new Date(b.reviewObject.created_time) - new Date(a.reviewObject.created_time)))
+                setCoachComments(coachComments => [response.data.reviewWithUser, ...coachComments].sort((a, b) => new Date(b.reviewObject.created_time) - new Date(a.reviewObject.created_time)))
                 ShowSuccessMessage('Комментарий успешно добавлен')
                 setReviewText('');
                 handleCloseModal();
@@ -227,7 +227,9 @@ export default function CoachDetailsCard(props) {
 
                 <div style={{display: 'flex', justifyContent: 'center', marginTop: '5px', width: '100%'}}>
                     {coachComments.length > 0 ? <div style={{marginTop: '40px'}}>
-                        {coachComments.map(comment => (
+                        {coachComments
+                            .sort((a, b) => new Date(b.reviewObject.updated_time) - new Date(a.reviewObject.updated_time))
+                            .map(comment => (
                             /*<AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
                                             buyButton={{buttonState: true}}/>*/
 

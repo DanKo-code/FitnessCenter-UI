@@ -33,10 +33,12 @@ export default function MainCoaches() {
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 {coaches.length > 0 ? (
                     <div style={{ marginTop: '40px', height: '400px', overflowY: 'scroll' }}>
-                        {coaches.map(coach => <CoachCard key={coach.coach.Id} coach={coach} width={'600px'} height={'400px'}></CoachCard>)}
+                        {coaches
+                            .sort((a, b) => new Date(b.coach.updated_time) - new Date(a.coach.updated_time))
+                            .map(coach => <CoachCard key={coach.coach.Id} coach={coach} width={'600px'} height={'400px'}></CoachCard>)}
                     </div>
                 ) : (
-                    <div>There are no coaches available.</div>
+                    <div>Нет никаких тренеров.</div>
                 )}
             </div>
         </div>

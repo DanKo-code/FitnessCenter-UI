@@ -172,7 +172,9 @@ export default function MainProfile() {
                     </div>
                     <div style={{height: '550px', overflowY: 'scroll'}}>
                         {orders ? <div>
-                            {orders.map(order => (
+                            {orders
+                                .sort((a, b) => new Date(b.orderObject.created_time) - new Date(a.orderObject.created_time))
+                                .map(order => (
                                 <AbonnementCard abonnement={
                                     {
                                         abonement: order.abonementObject,

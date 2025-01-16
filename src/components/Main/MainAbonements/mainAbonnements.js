@@ -333,7 +333,9 @@ export default function MainAbonnements() {
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     {showAbonnementsList ? (
                         <div style={{marginTop: '40px', height: '400px', overflowY: 'scroll'}}>
-                            {searchedAbonnements.map(abonnement => (
+                            {searchedAbonnements
+                                .sort((a, b) => new Date(b.abonement.updated_time) - new Date(a.abonement.updated_time))
+                                .map(abonnement => (
                                 <AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
                                                 buyButton={!orders?.some(order => abonnement?.abonement?.id === order?.orderObject?.abonement_id && order?.orderObject?.status === "Valid")}/>
                             ))}
