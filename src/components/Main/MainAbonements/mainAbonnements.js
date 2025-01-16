@@ -96,11 +96,17 @@ export default function MainAbonnements() {
 
     const handleSortOrderChange = (event) => {
         setSortOrder(event.target.value);
-        setSearchedAbonnements(sortAbonnements(searchedAbonnements, sortFilter, event.target.value));
+        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, visitingTime, currentServices, priceRange[0], priceRange[1])
+
+        const sorted = sortAbonnements(filtered, sortFilter, event.target.value);
+
+        console.log("sorted: "+JSON.stringify(sorted, null, 2))
+
+        setSearchedAbonnements(sorted);
     };
 
     const sortAbonnements = (abonnements, sortingFilter, order) => {
-        return abonnements.slice().sort((a, b) => {
+        return [...abonnements].sort((a, b) => {
             if (sortingFilter === "price") {
                 return order === "asc"
                     ? a.abonement.price - b.abonement.price
@@ -170,7 +176,8 @@ export default function MainAbonnements() {
 
     function handleSortFilterChange(event) {
         setSortFilter(event.target.value);
-        setSearchedAbonnements(sortAbonnements(searchedAbonnements, event.target.value, sortOrder));
+        const filtered = filterData(abonnements, titleSearch, validityPeriodSearch, visitingTime, currentServices, priceRange[0], priceRange[1])
+        setSearchedAbonnements(sortAbonnements(filtered, event.target.value, sortOrder));
     }
 
     const handleVisitingTimeChange = async (event) => {
@@ -334,9 +341,8 @@ export default function MainAbonnements() {
                     {showAbonnementsList ? (
                         <div style={{marginTop: '40px', height: '400px', overflowY: 'scroll'}}>
                             {searchedAbonnements
-                                .sort((a, b) => new Date(b.abonement.updated_time) - new Date(a.abonement.updated_time))
                                 .map(abonnement => (
-                                <AbonnementCard abonnement={abonnement} width={'600px'} height={'400px'}
+                                <AbonnementCard key={abonnement?.abonement?.id} abonnement={abonnement} width={'600px'} height={'400px'}
                                                 buyButton={!orders?.some(order => abonnement?.abonement?.id === order?.orderObject?.abonement_id && order?.orderObject?.status === "Valid")}/>
                             ))}
                         </div>
