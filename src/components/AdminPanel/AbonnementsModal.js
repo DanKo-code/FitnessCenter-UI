@@ -471,7 +471,7 @@ export default function AbonnementsModal({onClose}) {
 
                                     onClick={handleDelete}
                                 >
-                                    Delete
+                                    Удалить
                                 </Button>
                             </div>
                         )
@@ -492,7 +492,7 @@ export default function AbonnementsModal({onClose}) {
 
                             onClick={handleSubmit}
                         >
-                            Submit
+                            Подтвердить
                         </Button>
                     </div>
 

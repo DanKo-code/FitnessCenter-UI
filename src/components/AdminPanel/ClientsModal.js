@@ -195,7 +195,7 @@ export default function ClientsModal({onClose}) {
 
                         onClick={handleDelete}
                     >
-                        Delete
+                        УДАЛИТЬ
                     </Button>
                 </div>
 

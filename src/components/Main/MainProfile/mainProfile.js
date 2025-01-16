@@ -157,7 +157,7 @@ export default function MainProfile() {
 
                         onClick={handleSubmit}
                     >
-                        Submit
+                        Изменить
                     </Button>
                 </div>
 
