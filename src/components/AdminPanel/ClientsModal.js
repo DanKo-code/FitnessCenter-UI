@@ -175,7 +175,7 @@ export default function ClientsModal({onClose}) {
                             ))}
                         </div>
                     ) : (
-                        <div>There are no clients</div>
+                        <div>Нету никаких клиентов</div>
                     )}
                 </div>
 
